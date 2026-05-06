@@ -227,11 +227,11 @@ main{padding:24px;overflow-y:auto;}
 <!-- ══════════ APP ══════════ -->
 <div id="app">
   <header>
-    <div class="logo">
-      <div class="logo-badge">⚕</div>
+    <div class="logo" onclick="isFormateur&&openSiteModal()" style="cursor:default" id="logo-wrap">
+      <div class="logo-badge" id="hdr-badge">⚕</div>
       <div>
-        <div class="logo-name">Compendium SSSM</div>
-        <div class="logo-ver">Arma3 · SFMU-based · v2.0</div>
+        <div class="logo-name" id="hdr-title">Compendium SSSM</div>
+        <div class="logo-ver" id="hdr-sub">Arma3 · SFMU-based · v2.0</div>
       </div>
     </div>
     <div class="header-right">
@@ -250,6 +250,7 @@ main{padding:24px;overflow-y:auto;}
     <span class="tab on" onclick="showTab('compendium',this)">📖 Compendium</span>
     <span class="tab" onclick="showTab('edit',this)">✏️ Gérer les fiches</span>
     <span class="tab" onclick="showTab('profils',this)">👥 Gérer les profils</span>
+    <span class="tab" onclick="showTab('site',this)">🎨 Apparence</span>
   </div>
 
   <div class="wrap">
@@ -260,16 +261,11 @@ main{padding:24px;overflow-y:auto;}
     <main>
       <!-- ACCUEIL -->
       <div id="view-home">
-        <div class="home-icon">⚕️</div>
-        <div class="home-title">Compendium Médical SSSM</div>
-        <div class="home-sub">Base pharmacologique SFMU/SAMU pour le roleplay médical sur Arma 3. Sélectionne un profil puis clique sur un médicament.</div>
+        <div id="home-icon" class="home-icon">⚕️</div>
+        <div id="home-title" class="home-title">Compendium Médical SSSM</div>
+        <div id="home-sub" class="home-sub">Base pharmacologique SFMU/SAMU pour le roleplay médical sur Arma 3. Sélectionne un profil puis clique sur un médicament.</div>
         <div class="home-stats" id="home-stats"></div>
-        <div class="home-tips">
-          <div class="tip"><strong>🩺 Infirmier</strong>Antalgiques palier I-II, antiseptiques, bronchodilatateurs de base</div>
-          <div class="tip"><strong>👨‍⚕️ Médecin</strong>Toute la pharmacopée d'urgence : opioïdes forts, anesthésiques, réanimation</div>
-          <div class="tip"><strong>🧠 CUMP</strong>Psychotropes, anxiolytiques, antidépresseurs, substitution</div>
-          <div class="tip"><strong>💊 Pharmacien</strong>Médicaments OTC, vitamines, traitements chroniques</div>
-        </div>
+        <div class="home-tips" id="home-tips"></div>
       </div>
       <!-- FICHE -->
       <div id="view-med"></div>
@@ -291,6 +287,49 @@ main{padding:24px;overflow-y:auto;}
         </div>
         <div id="profil-edit-list"></div>
       </div>
+      <!-- APPARENCE (formateur) -->
+      <div id="view-site" style="display:none">
+        <div class="edit-header"><div class="edit-title">🎨 Apparence du site</div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
+          <!-- Header -->
+          <div class="section">
+            <div class="section-head"><span class="sh-bar" style="background:var(--blue)"></span>En-tête du site</div>
+            <div class="section-body" style="display:flex;flex-direction:column;gap:10px">
+              <div class="mf-group"><label>Emoji / icône</label><input type="text" id="s-badge" placeholder="⚕" maxlength="4" style="font-size:22px;text-align:center" oninput="previewSite()"></div>
+              <div class="mf-group"><label>Titre principal (header)</label><input type="text" id="s-title" placeholder="Compendium SSSM" oninput="previewSite()"></div>
+              <div class="mf-group"><label>Sous-titre header</label><input type="text" id="s-sub" placeholder="Arma3 · SFMU-based · v2.0" oninput="previewSite()"></div>
+            </div>
+          </div>
+          <!-- Page d'accueil -->
+          <div class="section">
+            <div class="section-head"><span class="sh-bar" style="background:var(--green)"></span>Page d'accueil</div>
+            <div class="section-body" style="display:flex;flex-direction:column;gap:10px">
+              <div class="mf-group"><label>Icône centrale (emoji)</label><input type="text" id="s-homeicon" placeholder="⚕️" maxlength="4" style="font-size:22px;text-align:center" oninput="previewSite()"></div>
+              <div class="mf-group"><label>Titre page d'accueil</label><input type="text" id="s-hometitle" placeholder="Compendium Médical SSSM" oninput="previewSite()"></div>
+              <div class="mf-group"><label>Description sous le titre</label><textarea id="s-homesub" rows="2" placeholder="Base pharmacologique SFMU/SAMU…" oninput="previewSite()"></textarea></div>
+            </div>
+          </div>
+        </div>
+        <!-- Aperçu -->
+        <div class="section" style="margin-top:16px">
+          <div class="section-head"><span class="sh-bar" style="background:var(--teal)"></span>Aperçu en temps réel</div>
+          <div class="section-body">
+            <div style="background:var(--surface2);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <div id="prev-badge" style="width:32px;height:32px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">⚕</div>
+              <div><div id="prev-title" style="font-weight:600;font-size:15px">Compendium SSSM</div><div id="prev-sub" style="font-size:10px;color:var(--text3)">Arma3 · SFMU-based · v2.0</div></div>
+            </div>
+            <div style="text-align:center;padding:16px 0">
+              <div id="prev-homeicon" style="font-size:40px;margin-bottom:8px">⚕️</div>
+              <div id="prev-hometitle" style="font-size:18px;font-weight:600;margin-bottom:4px">Compendium Médical SSSM</div>
+              <div id="prev-homesub" style="font-size:12px;color:var(--text2)">Base pharmacologique SFMU/SAMU pour le roleplay médical sur Arma 3.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <button class="btn-save" onclick="saveSiteConfig()">💾 Enregistrer l'apparence</button>
+          <button class="btn-cancel" onclick="resetSiteConfig()">↩ Réinitialiser</button>
+        </div>
+      </div>
     </main>
   </div>
 </div>
@@ -309,7 +348,8 @@ main{padding:24px;overflow-y:auto;}
         <div class="mf-group"><label>Emoji</label><input type="text" id="ep-emoji" placeholder="👩‍⚕️" maxlength="4" style="text-align:center;font-size:20px"></div>
       </div>
       <div class="mf-group"><label>Nom affiché</label><input type="text" id="ep-label" placeholder="ex: Sage-femme"></div>
-      <div class="mf-group"><label>Couleur (CSS : ex: #22c55e ou teal)</label><input type="text" id="ep-color" placeholder="#22c55e"></div>
+      <div class="mf-group"><label>Couleur (CSS : ex: #22c55e)</label><input type="text" id="ep-color" placeholder="#22c55e"></div>
+      <div class="mf-group"><label>Description (page d'accueil)</label><textarea id="ep-desc" rows="2" placeholder="Antalgiques palier I-II, antiseptiques, bronchodilatateurs de base"></textarea></div>
       <div style="margin-top:8px;font-size:12px;color:var(--text3)">Aperçu : <span id="ep-preview" style="padding:3px 10px;border-radius:5px;font-size:12px;font-family:var(--mono);border:1px solid">Profil</span></div>
     </div>
     <div class="modal-foot">
@@ -867,7 +907,73 @@ let DB = [
 ];
 
 // ═══════════════════════════════════════════════════
-// STATE & AUTH
+// SITE CONFIG
+// ═══════════════════════════════════════════════════
+const SITE_DEFAULTS = {
+  badge:'⚕', title:'Compendium SSSM', sub:'Arma3 · SFMU-based · v2.0',
+  homeicon:'⚕️', hometitle:'Compendium Médical SSSM',
+  homesub:'Base pharmacologique SFMU/SAMU pour le roleplay médical sur Arma 3. Sélectionne un profil puis clique sur un médicament.'
+};
+let SITE_CONFIG = {...SITE_DEFAULTS};
+
+function loadSiteConfig() {
+  const s = localStorage.getItem('compendium_site');
+  if (s) { try { SITE_CONFIG = {...SITE_DEFAULTS, ...JSON.parse(s)}; } catch(e){} }
+}
+function saveSiteConfig() {
+  SITE_CONFIG.badge    = document.getElementById('s-badge').value.trim()    || SITE_DEFAULTS.badge;
+  SITE_CONFIG.title    = document.getElementById('s-title').value.trim()    || SITE_DEFAULTS.title;
+  SITE_CONFIG.sub      = document.getElementById('s-sub').value.trim()      || SITE_DEFAULTS.sub;
+  SITE_CONFIG.homeicon = document.getElementById('s-homeicon').value.trim() || SITE_DEFAULTS.homeicon;
+  SITE_CONFIG.hometitle= document.getElementById('s-hometitle').value.trim()|| SITE_DEFAULTS.hometitle;
+  SITE_CONFIG.homesub  = document.getElementById('s-homesub').value.trim()  || SITE_DEFAULTS.homesub;
+  localStorage.setItem('compendium_site', JSON.stringify(SITE_CONFIG));
+  applySiteConfig();
+  alert('✅ Apparence enregistrée !');
+}
+function resetSiteConfig() {
+  if (!confirm('Réinitialiser l\'apparence aux valeurs par défaut ?')) return;
+  SITE_CONFIG = {...SITE_DEFAULTS};
+  localStorage.removeItem('compendium_site');
+  applySiteConfig();
+  openSiteTab();
+}
+function applySiteConfig() {
+  document.getElementById('hdr-badge').textContent  = SITE_CONFIG.badge;
+  document.getElementById('hdr-title').textContent  = SITE_CONFIG.title;
+  document.getElementById('hdr-sub').textContent    = SITE_CONFIG.sub;
+  document.getElementById('home-icon').textContent  = SITE_CONFIG.homeicon;
+  document.getElementById('home-title').textContent = SITE_CONFIG.hometitle;
+  document.getElementById('home-sub').textContent   = SITE_CONFIG.homesub;
+  // curseur cliquable sur le logo si formateur
+  document.getElementById('logo-wrap').style.cursor = isFormateur ? 'pointer' : 'default';
+}
+function openSiteTab() {
+  document.getElementById('s-badge').value    = SITE_CONFIG.badge;
+  document.getElementById('s-title').value    = SITE_CONFIG.title;
+  document.getElementById('s-sub').value      = SITE_CONFIG.sub;
+  document.getElementById('s-homeicon').value = SITE_CONFIG.homeicon;
+  document.getElementById('s-hometitle').value= SITE_CONFIG.hometitle;
+  document.getElementById('s-homesub').value  = SITE_CONFIG.homesub;
+  previewSite();
+}
+function previewSite() {
+  document.getElementById('prev-badge').textContent    = document.getElementById('s-badge').value     || SITE_DEFAULTS.badge;
+  document.getElementById('prev-title').textContent    = document.getElementById('s-title').value     || SITE_DEFAULTS.title;
+  document.getElementById('prev-sub').textContent      = document.getElementById('s-sub').value       || SITE_DEFAULTS.sub;
+  document.getElementById('prev-homeicon').textContent = document.getElementById('s-homeicon').value  || SITE_DEFAULTS.homeicon;
+  document.getElementById('prev-hometitle').textContent= document.getElementById('s-hometitle').value || SITE_DEFAULTS.hometitle;
+  document.getElementById('prev-homesub').textContent  = document.getElementById('s-homesub').value   || SITE_DEFAULTS.homesub;
+}
+function openSiteModal() { showTab('site', document.querySelectorAll('.tab')[3]); }
+
+// ═════ HOME TIPS dynamiques
+function renderHomeTips() {
+  document.getElementById('home-tips').innerHTML = PROFILS.map(p => `
+    <div class="tip"><strong>${p.emoji} ${p.label}</strong>${p.desc||''}</div>
+  `).join('');
+}
+
 // ═══════════════════════════════════════════════════
 let currentProfile = 'all';
 let isFormateur = false;
@@ -877,7 +983,10 @@ let currentTab = 'compendium';
 window.addEventListener('DOMContentLoaded', () => {
   loadDB();
   loadProfils();
+  loadSiteConfig();
+  applySiteConfig();
   renderProfilBar();
+  renderHomeTips();
   rebuildProfilCheckboxes();
   renderSidebar();
   showHome();
@@ -939,10 +1048,10 @@ document.addEventListener('keydown', e => {
 // PROFILS
 // ═══════════════════════════════════════════════════
 let PROFILS = [
-  {id:'infirmier',  label:'Infirmier',  emoji:'🩺',  color:'#3b82f6'},
-  {id:'medecin',   label:'Médecin',    emoji:'👨‍⚕️', color:'#22c55e'},
-  {id:'cump',      label:'CUMP',       emoji:'🧠',  color:'#a855f7'},
-  {id:'pharmacien',label:'Pharmacien', emoji:'💊',  color:'#eab308'},
+  {id:'infirmier',  label:'Infirmier',  emoji:'🩺',  color:'#3b82f6', desc:'Antalgiques palier I-II, antiseptiques, bronchodilatateurs de base'},
+  {id:'medecin',   label:'Médecin',    emoji:'👨‍⚕️', color:'#22c55e', desc:'Toute la pharmacopée d\'urgence : opioïdes forts, anesthésiques, réanimation'},
+  {id:'cump',      label:'CUMP',       emoji:'🧠',  color:'#a855f7', desc:'Psychotropes, anxiolytiques, antidépresseurs, substitution'},
+  {id:'pharmacien',label:'Pharmacien', emoji:'💊',  color:'#eab308', desc:'Médicaments OTC, vitamines, traitements chroniques'},
 ];
 
 function loadProfils() {
@@ -1003,6 +1112,7 @@ function openProfilModal(idx) {
   document.getElementById('ep-label').value = p?.label || '';
   document.getElementById('ep-emoji').value = p?.emoji || '';
   document.getElementById('ep-color').value = p?.color || '#3b82f6';
+  document.getElementById('ep-desc').value = p?.desc || '';
   updateProfilPreview();
   document.getElementById('modal-profil').style.display = 'flex';
 }
@@ -1030,14 +1140,13 @@ function saveProfil() {
   const label = document.getElementById('ep-label').value.trim();
   const emoji = document.getElementById('ep-emoji').value.trim();
   const color = document.getElementById('ep-color').value.trim();
+  const desc  = document.getElementById('ep-desc').value.trim();
   if (!id || !label) { alert('Identifiant et nom requis'); return; }
-  // Vérifier unicité si nouveau
   if (idxRaw === '' && PROFILS.find(p => p.id === id)) { alert(`L'identifiant "${id}" existe déjà`); return; }
-  const profil = {id, label, emoji, color};
+  const profil = {id, label, emoji, color, desc};
   if (idxRaw !== '') {
     const oldId = PROFILS[parseInt(idxRaw)].id;
     PROFILS[parseInt(idxRaw)] = profil;
-    // Mettre à jour les médicaments qui utilisaient l'ancien id
     if (oldId !== id) {
       DB.forEach(m => { if(m.profils.includes(oldId)) { m.profils = m.profils.map(p=>p===oldId?id:p); } });
       saveDB();
@@ -1048,8 +1157,8 @@ function saveProfil() {
   saveProfils();
   closeProfilModal();
   renderProfilBar();
+  renderHomeTips();
   renderProfilEditList();
-  // Mettre à jour les checkboxes dans la modal médicament
   rebuildProfilCheckboxes();
 }
 
@@ -1066,6 +1175,7 @@ function deleteProfil(idx) {
   saveProfils(); saveDB();
   if (currentProfile === p.id) { currentProfile = 'all'; }
   renderProfilBar();
+  renderHomeTips();
   renderProfilEditList();
   renderSidebar();
   rebuildProfilCheckboxes();
@@ -1105,6 +1215,10 @@ function showTab(tab, el) {
     hideAll();
     document.getElementById('view-profils').style.display = 'block';
     renderProfilEditList();
+  } else if (tab === 'site') {
+    hideAll();
+    document.getElementById('view-site').style.display = 'block';
+    openSiteTab();
   }
 }
 
@@ -1149,7 +1263,7 @@ function esc(s) { return s.replace(/'/g,"\\'"); }
 
 // ═════ VIEWS
 function hideAll() {
-  ['view-home','view-med','view-search','view-edit','view-profils'].forEach(id => document.getElementById(id).style.display='none');
+  ['view-home','view-med','view-search','view-edit','view-profils','view-site'].forEach(id => document.getElementById(id).style.display='none');
 }
 function showHome() {
   hideAll();
