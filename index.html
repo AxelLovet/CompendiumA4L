@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compendium SSSM — Arma3</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--surface3:#1f2d42;
+  --border:#2a3a52;--border2:#3a4f6a;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.1);--green-bd:rgba(34,197,94,0.3);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.1);--blue-bd:rgba(59,130,246,0.3);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.1);--red-bd:rgba(239,68,68,0.35);
+  --orange:#f97316;--orange-bg:rgba(249,115,22,0.1);--orange-bd:rgba(249,115,22,0.3);
+  --yellow:#eab308;--yellow-bg:rgba(234,179,8,0.1);--yellow-bd:rgba(234,179,8,0.3);
+  --purple:#a855f7;--purple-bg:rgba(168,85,247,0.1);--purple-bd:rgba(168,85,247,0.3);
+  --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.1);--teal-bd:rgba(20,184,166,0.3);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:var(--font);}
+
+/* ── LOGIN ── */
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:340px;text-align:center;}
+.login-logo{font-size:36px;margin-bottom:8px;}
+.login-title{font-size:20px;font-weight:600;margin-bottom:4px;}
+.login-sub{font-size:12px;color:var(--text2);margin-bottom:28px;font-family:var(--mono);}
+.login-field{margin-bottom:14px;text-align:left;}
+.login-field label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;font-family:var(--mono);}
+.login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border 0.2s;}
+.login-field input:focus{border-color:var(--blue);}
+.login-btn{width:100%;padding:11px;background:var(--blue);border:none;border-radius:8px;color:white;font-size:14px;font-weight:600;margin-top:8px;transition:opacity 0.2s;}
+.login-btn:hover{opacity:0.88;}
+.login-hint{font-size:11px;color:var(--text3);margin-top:16px;font-family:var(--mono);}
+.login-error{color:var(--red);font-size:12px;margin-top:8px;display:none;}
+
+/* ── HEADER ── */
+header{height:54px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-badge{background:linear-gradient(135deg,#1d4ed8,#3b82f6);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.logo-name{font-weight:600;font-size:15px;}
+.logo-ver{font-size:10px;color:var(--text3);font-family:var(--mono);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.formateur-badge{background:var(--yellow-bg);border:1px solid var(--yellow-bd);color:var(--yellow);padding:4px 10px;border-radius:6px;font-size:11px;font-family:var(--mono);font-weight:600;}
+.logout-btn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:6px;font-size:12px;transition:all 0.15s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* ── PROFIL BAR ── */
+#profil-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.pbar-label{font-size:11px;color:var(--text3);font-family:var(--mono);margin-right:4px;}
+.pbtn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:12px;transition:all 0.15s;}
+.pbtn:hover{color:var(--text);border-color:var(--border2);}
+.pbtn.on[data-p="all"]{background:rgba(226,232,240,0.08);border-color:var(--border2);color:var(--text);}
+.pbtn.on[data-p="infirmier"]{background:var(--blue-bg);border-color:var(--blue-bd);color:var(--blue);}
+.pbtn.on[data-p="medecin"]{background:var(--green-bg);border-color:var(--green-bd);color:var(--green);}
+.pbtn.on[data-p="cump"]{background:var(--purple-bg);border-color:var(--purple-bd);color:var(--purple);}
+.pbtn.on[data-p="pharmacien"]{background:var(--yellow-bg);border-color:var(--yellow-bd);color:var(--yellow);}
+
+/* ── LAYOUT ── */
+.wrap{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 94px);}
+
+/* ── SIDEBAR ── */
+aside{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;position:sticky;top:94px;height:calc(100vh - 94px);}
+.sb-search{padding:10px;}
+#sb-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;}
+#sb-input:focus{border-color:var(--blue);}
+#sb-input::placeholder{color:var(--text3);}
+.sb-section{padding-bottom:4px;}
+.sb-cat{padding:10px 14px 4px;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;color:var(--text3);display:flex;align-items:center;justify-content:space-between;}
+.sb-cat-count{background:var(--surface2);border:1px solid var(--border);padding:1px 6px;border-radius:8px;font-size:9px;}
+.sb-med{padding:5px 14px 5px 22px;font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:7px;border-left:2px solid transparent;transition:all 0.1s;}
+.sb-med:hover{color:var(--text);background:var(--surface2);}
+.sb-med.on{color:var(--blue);border-left-color:var(--blue);}
+.sb-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+
+/* ── MAIN ── */
+main{padding:24px;overflow-y:auto;}
+
+/* ── ACCUEIL ── */
+#view-home{text-align:center;padding:48px 20px;}
+.home-icon{font-size:52px;margin-bottom:12px;}
+.home-title{font-size:22px;font-weight:600;margin-bottom:6px;}
+.home-sub{color:var(--text2);font-size:13px;max-width:420px;margin:0 auto 28px;}
+.home-stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.hstat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 22px;text-align:center;}
+.hstat-n{font-size:26px;font-weight:700;font-family:var(--mono);}
+.hstat-l{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+.home-tips{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:560px;margin-left:auto;margin-right:auto;}
+.tip{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text2);text-align:left;flex:1;min-width:150px;}
+.tip strong{color:var(--text);display:block;margin-bottom:2px;font-size:11px;}
+
+/* ── FICHE MED ── */
+#view-med{display:none;}
+.med-top{margin-bottom:20px;}
+.med-nom{font-size:26px;font-weight:700;margin-bottom:3px;}
+.med-classe{font-size:13px;color:var(--text2);margin-bottom:10px;}
+.med-profils{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.mpill{padding:3px 10px;border-radius:5px;font-size:11px;font-family:var(--mono);font-weight:600;}
+.mpill-infirmier{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);}
+.mpill-medecin{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);}
+.mpill-cump{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd);}
+.mpill-pharmacien{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-bd);}
+.med-cats{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:16px;}
+.med-cats span{margin-right:10px;}
+
+/* alertes */
+.alert-bloc{border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;display:flex;align-items:flex-start;gap:8px;}
+.alert-bloc.danger{background:var(--red-bg);border:1px solid var(--red-bd);color:#fca5a5;}
+.alert-bloc.warn{background:var(--orange-bg);border:1px solid var(--orange-bd);color:#fdba74;}
+.alert-bloc.info{background:var(--blue-bg);border:1px solid var(--blue-bd);color:#93c5fd;}
+.alert-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+
+/* grille de sections */
+.med-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-top:16px;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.section-head{padding:10px 14px;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border);}
+.section-head .sh-bar{width:3px;height:14px;border-radius:2px;flex-shrink:0;}
+.section-body{padding:12px 14px;}
+.section-body p{font-size:13px;color:var(--text2);line-height:1.65;}
+
+/* dosages */
+.dose-item{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-bottom:8px;}
+.dose-item:last-child{margin-bottom:0;}
+.dose-voie{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:4px;}
+.dose-val{font-size:14px;font-weight:600;color:var(--text);font-family:var(--mono);}
+.dose-note{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5;}
+.dose-delai{font-size:10px;color:var(--teal);font-family:var(--mono);margin-top:4px;}
+
+/* listes */
+.ul-med{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.ul-med li{font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.ul-med li::before{content:'›';color:var(--border2);flex-shrink:0;}
+
+/* interactions */
+.interaction-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.interaction-item:last-child{border-bottom:none;}
+.int-sev{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.int-sev.haut{background:var(--red);}
+.int-sev.mod{background:var(--orange);}
+.int-sev.bas{background:var(--yellow);}
+.int-txt{color:var(--text2);}
+.int-txt strong{color:var(--text);}
+
+/* surdosage */
+.surdosage-box{background:var(--red-bg);border:1px solid var(--red-bd);border-radius:7px;padding:10px 12px;}
+.surdosage-box p{font-size:12px;color:#fca5a5;line-height:1.6;}
+.surdosage-box strong{color:#f87171;}
+
+/* ── MODE FORMATEUR ── */
+#view-edit{display:none;}
+.edit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.edit-title{font-size:18px;font-weight:600;}
+.btn-add{background:var(--green);border:none;color:white;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.med-edit-list{display:flex;flex-direction:column;gap:8px;}
+.med-edit-row{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mer-left{flex:1;}
+.mer-nom{font-size:14px;font-weight:500;margin-bottom:2px;}
+.mer-cls{font-size:12px;color:var(--text2);}
+.mer-btns{display:flex;gap:6px;flex-shrink:0;}
+.btn-edit-med{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);padding:5px 12px;border-radius:6px;font-size:12px;}
+.btn-del-med{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);padding:5px 12px;border-radius:6px;font-size:12px;}
+
+/* ── MODAL EDIT ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:680px;margin:auto;}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-close{background:transparent;border:none;color:var(--text2);font-size:20px;line-height:1;}
+.modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px;max-height:70vh;overflow-y:auto;}
+.mf-group{display:flex;flex-direction:column;gap:5px;}
+.mf-group label{font-size:11px;color:var(--text2);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.5px;}
+.mf-group input,.mf-group textarea,.mf-group select{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:var(--font);font-size:13px;outline:none;width:100%;}
+.mf-group input:focus,.mf-group textarea:focus{border-color:var(--blue);}
+.mf-group textarea{resize:vertical;min-height:70px;line-height:1.5;}
+.mf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--text2);padding:8px 18px;border-radius:7px;font-size:13px;}
+.btn-save{background:var(--blue);border:none;color:white;padding:8px 20px;border-radius:7px;font-size:13px;font-weight:600;}
+
+/* ── SEARCH VIEW ── */
+#view-search{display:none;}
+.sr-meta{font-size:12px;color:var(--text3);font-family:var(--mono);margin-bottom:14px;}
+.sr-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:7px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;}
+.sr-item:hover{border-color:var(--blue);}
+.sr-nom{font-size:14px;font-weight:500;margin-bottom:2px;}
+.sr-meta2{font-size:12px;color:var(--text2);}
+.sr-arrow{color:var(--text3);}
+
+/* ── NAV TABS (formateur) ── */
+#tabs{display:none;background:var(--surface2);border-bottom:1px solid var(--border);padding:0 20px;}
+.tab{display:inline-block;padding:10px 16px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+@media(max-width:640px){.wrap{grid-template-columns:1fr;}aside{position:relative;top:0;height:260px;}.med-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ MODAL LOGIN FORMATEUR ══════════ -->
+<div class="modal-overlay" id="login-modal" style="display:none" onclick="if(event.target===this)closeLoginModal()">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-head">
+      <h3>Connexion Formateur</h3>
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mf-group"><label>Identifiant</label><input type="text" id="l-user" placeholder="NOM" autocomplete="off"></div>
+      <div class="mf-group"><label>Mot de passe</label><input type="password" id="l-pass" placeholder="••••"></div>
+      <div class="login-error" id="l-err" style="color:var(--red);font-size:12px;display:none;margin-top:4px">Identifiants incorrects</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeLoginModal()">Annuler</button>
+      <button class="btn-save" onclick="doLogin()">Se connecter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-badge">⚕</div>
+      <div>
+        <div class="logo-name">Compendium SSSM</div>
+        <div class="logo-ver">Arma3 · SFMU-based · v2.0</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="formateur-badge" id="role-badge" style="display:none">★ FORMATEUR</span>
+      <button class="logout-btn" id="logout-btn" style="display:none" onclick="doLogout()">Déconnexion</button>
+      <button class="logout-btn" id="login-btn" onclick="openLoginModal()" style="border-color:var(--blue-bd);color:var(--blue)">🔒 Formateur</button>
+    </div>
+  </header>
+
+  <div id="profil-bar">
+    <span class="pbar-label">Profil :</span>
+    <div id="profil-btns"></div>
+  </div>
+
+  <div id="tabs">
+    <span class="tab on" onclick="showTab('compendium',this)">📖 Compendium</span>
+    <span class="tab" onclick="showTab('edit',this)">✏️ Gérer les fiches</span>
+    <span class="tab" onclick="showTab('profils',this)">👥 Gérer les profils</span>
+  </div>
+
+  <div class="wrap">
+    <aside>
+      <div class="sb-search"><input type="text" id="sb-input" placeholder="Rechercher…" oninput="doSearch(this.value)"></div>
+      <div id="sb-content"></div>
+    </aside>
+    <main>
+      <!-- ACCUEIL -->
+      <div id="view-home">
+        <div class="home-icon">⚕️</div>
+        <div class="home-title">Compendium Médical SSSM</div>
+        <div class="home-sub">Base pharmacologique SFMU/SAMU pour le roleplay médical sur Arma 3. Sélectionne un profil puis clique sur un médicament.</div>
+        <div class="home-stats" id="home-stats"></div>
+        <div class="home-tips">
+          <div class="tip"><strong>🩺 Infirmier</strong>Antalgiques palier I-II, antiseptiques, bronchodilatateurs de base</div>
+          <div class="tip"><strong>👨‍⚕️ Médecin</strong>Toute la pharmacopée d'urgence : opioïdes forts, anesthésiques, réanimation</div>
+          <div class="tip"><strong>🧠 CUMP</strong>Psychotropes, anxiolytiques, antidépresseurs, substitution</div>
+          <div class="tip"><strong>💊 Pharmacien</strong>Médicaments OTC, vitamines, traitements chroniques</div>
+        </div>
+      </div>
+      <!-- FICHE -->
+      <div id="view-med"></div>
+      <!-- SEARCH -->
+      <div id="view-search"></div>
+      <!-- EDIT (formateur) -->
+      <div id="view-edit">
+        <div class="edit-header">
+          <div class="edit-title">✏️ Gestion des fiches</div>
+          <button class="btn-add" onclick="openModal(null)">＋ Nouveau médicament</button>
+        </div>
+        <div class="med-edit-list" id="edit-list"></div>
+      </div>
+      <!-- PROFILS (formateur) -->
+      <div id="view-profils" style="display:none">
+        <div class="edit-header">
+          <div class="edit-title">👥 Gestion des profils</div>
+          <button class="btn-add" onclick="openProfilModal(null)">＋ Nouveau profil</button>
+        </div>
+        <div id="profil-edit-list"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL PROFIL -->
+<div class="modal-overlay" id="modal-profil" style="display:none" onclick="if(event.target===this)closeProfilModal()">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-head">
+      <h3 id="modal-profil-title">Nouveau profil</h3>
+      <button class="modal-close" onclick="closeProfilModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ep-idx">
+      <div class="mf-row">
+        <div class="mf-group"><label>Identifiant unique (ex: medecin)</label><input type="text" id="ep-id" placeholder="ex: sage_femme"></div>
+        <div class="mf-group"><label>Emoji</label><input type="text" id="ep-emoji" placeholder="👩‍⚕️" maxlength="4" style="text-align:center;font-size:20px"></div>
+      </div>
+      <div class="mf-group"><label>Nom affiché</label><input type="text" id="ep-label" placeholder="ex: Sage-femme"></div>
+      <div class="mf-group"><label>Couleur (CSS : ex: #22c55e ou teal)</label><input type="text" id="ep-color" placeholder="#22c55e"></div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text3)">Aperçu : <span id="ep-preview" style="padding:3px 10px;border-radius:5px;font-size:12px;font-family:var(--mono);border:1px solid">Profil</span></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeProfilModal()">Annuler</button>
+      <button class="btn-save" onclick="saveProfil()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title">Nouveau médicament</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-idx">
+      <div class="mf-row">
+        <div class="mf-group"><label>Nom commercial</label><input type="text" id="e-nom" placeholder="ex: Morphine"></div>
+        <div class="mf-group"><label>Classe pharmacologique</label><input type="text" id="e-classe" placeholder="ex: Opioïde fort"></div>
+      </div>
+      <div class="mf-group"><label>Profils autorisés</label>
+        <div id="profil-checkboxes" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px"></div>
+      </div>
+      <div class="mf-group"><label>Catégories (virgule)</label><input type="text" id="e-cats" placeholder="ex: Antalgie, Anti-inflammatoire"></div>
+      <div class="mf-group"><label>Indications (une par ligne)</label><textarea id="e-indications" rows="3" placeholder="Douleur aiguë&#10;Fièvre"></textarea></div>
+      <div class="mf-group"><label>Dosages adulte (voie | valeur | note | délai — une par ligne)</label>
+        <textarea id="e-dosages" rows="4" placeholder="IV adulte | 1 mg/kg | Diluer dans NaCl 0.9% | Effet en 5 min&#10;PO | 1g/6h | Max 4g/j |"></textarea>
+        <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">Format: voie | valeur | note | délai</span>
+      </div>
+      <div class="mf-group"><label>Contre-indications (une par ligne)</label><textarea id="e-ci" rows="3" placeholder="Insuffisance rénale sévère&#10;Allergie pénicillines"></textarea></div>
+      <div class="mf-group"><label>Effets indésirables (une par ligne)</label><textarea id="e-ei" rows="3" placeholder="Nausées&#10;Somnolence"></textarea></div>
+      <div class="mf-group"><label>Mécanisme d'action</label><textarea id="e-mecanisme" rows="3" placeholder="Antagoniste NMDA..."></textarea></div>
+      <div class="mf-group"><label>Interactions (médicament | sévérité: haut/mod/bas — une par ligne)</label>
+        <textarea id="e-interactions" rows="3" placeholder="IMAO | haut&#10;Tramadol | mod"></textarea></div>
+      <div class="mf-group"><label>Surdosage / Antidote</label><textarea id="e-surdosage" rows="2" placeholder="Antidote : Naloxone 0.4mg IV. Signes : myosis, bradypnée..."></textarea></div>
+      <div class="mf-group"><label>⚠ Alertes critiques (une par ligne)</label><textarea id="e-alertes" rows="3" placeholder="JAMAIS IV rapide — risque arrêt cardiaque&#10;Toujours aspirer avant injection"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveMed()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// BASE DE DONNÉES (sources SFMU, Plaisance-Charles 4e éd.)
+// ═══════════════════════════════════════════════════════
+let DB = [
+  {
+    nom:"Adrénaline (Épinéphrine)",classe:"Catécholamine α/β-agoniste",profils:["medecin"],
+    categories:["Arrêt cardiaque","Choc anaphylactique","Vasopresseurs"],
+    indications:["Arrêt Cardio-Respiratoire (ACR) — 1ère intention","Choc anaphylactique","Bradycardie réfractaire à l'atropine","Hypotension réfractaire"],
+    dosages:[
+      {voie:"IV — ACR",valeur:"1 mg IVD",note:"Toutes les 3–5 min pendant RCP. Diluer dans 10 mL NaCl 0.9%",delai:"Immédiat"},
+      {voie:"IM — Anaphylaxie",valeur:"0.3–0.5 mg IM face antéro-ext. cuisse",note:"Auto-injecteur ou IM profonde. Répéter après 5–15 min si besoin",delai:"3–5 min"},
+      {voie:"IV — Choc (perfusion)",valeur:"0.01–1 µg/kg/min",note:"Titrer sur PAM cible > 65 mmHg. VVC obligatoire",delai:"Continu"}
+    ],
+    ci:["Aucune CI absolue en ACR","Phéochromocytome (relatif)","Thyrotoxicose (relatif)","Glaucome angle fermé (collyres)"],
+    effets:["Tachycardie","HTA","Arythmies ventriculaires","Ischémie myocardique","Tremblement","Anxiété","Pâleur"],
+    mecanisme:"Agoniste α1 (vasoconstriction), β1 (inotrope/chronotrope positif), β2 (bronchodilatation). En ACR : restaure la perfusion coronaire et cérébrale.",
+    interactions:[{med:"β-bloquants",sev:"mod"},{med:"Anesthésiques halothane/isoflurane",sev:"haut"}],
+    surdosage:"HTA sévère, arythmies, OAP. Traitement : phentolamine, β-bloquants. Surveillance ECG continue.",
+    alertes:["⚠ En anaphylaxie : IM en PRIORITÉ — jamais IV direct sauf ACR","⚠ En ACR : 1 mg IV toutes les 3–5 min pendant la RCP","VVC obligatoire pour perfusion continue (risque nécrose si extravasation)"]
+  },
+  {
+    nom:"Morphine",classe:"Opioïde fort — Palier III (OMS)",profils:["medecin"],
+    categories:["Antalgie","Opioïdes"],
+    indications:["Douleur intense EVA > 6/10","Douleur thoracique SCA","OAP (veino-dilatation)","Douleur post-traumatique sévère"],
+    dosages:[
+      {voie:"IV — Titration (adulte)",valeur:"2–3 mg / 5–10 min",note:"Max 0.10–0.15 mg/kg total. Objectif : EVA ≤ 3/10. Diluer à 1 mg/mL",delai:"3–5 min"},
+      {voie:"IV — Titration (enfant)",valeur:"0.05–0.10 mg/kg puis 0.01 mg/kg/5 min",note:"Diluer dans NaCl 0.9%. Surveillance respiratoire++",delai:"3–5 min"},
+      {voie:"SC / IM",valeur:"5–10 mg",note:"Toutes les 4h. Biodisponibilité SC ≈ IV",delai:"15–30 min"},
+      {voie:"PO — LP",valeur:"10–30 mg toutes les 12h",note:"Forme à libération prolongée pour douleur chronique",delai:"60–90 min"}
+    ],
+    ci:["HTIC (augmente PIC)","TCE non évalué","Dépression respiratoire non ventilée","Iléus paralytique","< 1 mois (néonat)","Allergie morphine"],
+    effets:["Dépression respiratoire (dose-dépendant)","Nausées/vomissements (30–40%)","Constipation","Prurit","Rétention urinaire","Sédation","Myosis","Dépendance physique (long terme)"],
+    mecanisme:"Agoniste pur des récepteurs µ-opioïdes centraux et médullaires → modulation nociceptive + effet veineux en OAP. Métabolisé en morphine-6-glucuronide (M6G, actif) et M3G.",
+    interactions:[{med:"Benzodiazépines (BZD)",sev:"haut"},{med:"Alcool",sev:"haut"},{med:"IMAO",sev:"haut"},{med:"Dépresseurs SNC",sev:"mod"}],
+    surdosage:"Triade : myosis, bradypnée, coma. ANTIDOTE : Naloxone (Narcan) 0.4 mg IVD — répéter toutes les 2–3 min. Demi-vie naloxone < morphine → surveiller re-narcotisation.",
+    alertes:["⚠ ANTIDOTE DISPONIBLE = Naloxone (Narcan) obligatoire","⚠ Ne jamais injecter > 2–3 mg en bolus rapide — titration obligatoire","Surveillance : FR, SpO2, conscience toutes les 5 min pendant titration"]
+  },
+  {
+    nom:"Kétamine",classe:"Anesthésique dissociatif — Antagoniste NMDA",profils:["medecin"],
+    categories:["Antalgie","Anesthésie","Sédation procédurale"],
+    indications:["Analgésie sub-anesthésique (faible dose)","Induction anesthésie générale (maintien réflexes protecteurs)","Sédation dissociative","Bronchospasme sévère réfractaire","Polytraumatisé instable"],
+    dosages:[
+      {voie:"IV — Analgésie (faible dose)",valeur:"0.1–0.5 mg/kg sur 10 min",note:"Associer midazolam 0.05 mg/kg pour prévenir hallucinations",delai:"30–60 s"},
+      {voie:"IV — Induction AG",valeur:"1–2 mg/kg sur 1 min",note:"Maintien réflexes laryngés. Associer BZD systématiquement",delai:"30–60 s"},
+      {voie:"IM",valeur:"4–6 mg/kg",note:"Si pas d'accès IV. Délai 3–5 min",delai:"3–5 min"}
+    ],
+    ci:["HTA non contrôlée (PAS > 180 mmHg)","HTIC","Psychose active / schizophrénie","Éclampsie","Thyrotoxicose","< 3 mois"],
+    effets:["Hypersalivation (prévenir par atropine)","Hallucinations / cauchemars au réveil (prévenir par BZD)","Hypertension artérielle","Tachycardie","Nystagmus","Laryngospasme (rare)","Nausées"],
+    mecanisme:"Antagoniste non compétitif des récepteurs NMDA → état dissociatif : profonde analgésie avec maintien des réflexes laryngés et de la ventilation spontanée. Bronchodilatateur (effet β2).",
+    interactions:[{med:"Halothane",sev:"haut"},{med:"Dépresseurs respiratoires",sev:"mod"},{med:"Hormones thyroïdiennes",sev:"mod"}],
+    surdosage:"Hypertension, apnée (rare), rigidité musculaire. Sédation par BZD si nécessaire. Pas d'antidote spécifique.",
+    alertes:["⚠ Toujours associer midazolam ou diazépam pour prévenir hallucinations","⚠ Atropine 0.5 mg disponible (hypersalivation → laryngospasme)","Avantage polytraumatisé : maintient hémodynamique + réflexes protecteurs"]
+  },
+  {
+    nom:"Fentanyl",classe:"Opioïde fort liposoluble — Palier III",profils:["medecin"],
+    categories:["Antalgie","Anesthésie","Opioïdes"],
+    indications:["Douleur intense procédurale","Induction anesthésie générale","Sédation-analgésie en réanimation","Douleur percée (cancer)"],
+    dosages:[
+      {voie:"IV — Analgésie",valeur:"1–2 µg/kg",note:"Titration. Effet en 1–2 min, durée 30–60 min",delai:"1–2 min"},
+      {voie:"Intranasal (IN)",valeur:"1–2 µg/kg",note:"Spray intranasal. Idéal enfant/accès IV difficile",delai:"5–10 min"},
+      {voie:"Patch — Douleur chronique",valeur:"12–100 µg/h",note:"Changer toutes les 72h. Équilibre en 12–24h",delai:"12–24h"}
+    ],
+    ci:["Dépression respiratoire sévère non assistée","Allergie fentanyl","IMAO < 14 jours"],
+    effets:["Apnée (injection rapide)","Rigidité thoracique en bois (forte dose IV rapide)","Bradycardie","Nausées","Myosis","Dépendance"],
+    mecanisme:"Agoniste µ-opioïde très liposoluble → onset ultra-rapide. Puissance 80–100× > morphine IV. Durée courte (redistribution rapide).",
+    interactions:[{med:"Benzodiazépines",sev:"haut"},{med:"Propofol",sev:"mod"},{med:"Érythromycine (CYP3A4)",sev:"mod"}],
+    surdosage:"Apnée, bradycardie, coma. ANTIDOTE : Naloxone 0.4 mg IVD. Demi-vie fentanyl > naloxone → risque re-narcotisation.",
+    alertes:["⚠ 80–100× plus puissant que la morphine — doses µg pas mg","⚠ Rigidité thoracique en IV rapide → ventilation en pression positive + succinylcholine","ANTIDOTE : Naloxone disponible obligatoirement"]
+  },
+  {
+    nom:"Naloxone (Narcan)",classe:"Antagoniste pur opioïde",profils:["medecin"],
+    categories:["Antidote / Overdose","Opioïdes"],
+    indications:["Overdose opioïdes (morphine, héroïne, fentanyl, codéine)","Dépression respiratoire aux opioïdes","Reversal en fin d'anesthésie"],
+    dosages:[
+      {voie:"IV",valeur:"0.4 mg IVD",note:"Répéter toutes les 2–3 min si besoin. Max 10 mg",delai:"1–2 min"},
+      {voie:"IM / SC",valeur:"0.4–0.8 mg",note:"Si pas d'accès IV",delai:"5–10 min"},
+      {voie:"Intranasal",valeur:"2 mg / narine (spray Narcan)",note:"Option préhospitalière. Répéter l'autre narine si besoin",delai:"5–10 min"}
+    ],
+    ci:["Allergie naloxone"],
+    effets:["Sevrage brutal si dépendance (agitation, tachycardie, HTA, sueurs)","OAP de reversal (rare)","Nausées"],
+    mecanisme:"Antagoniste pur de haute affinité pour récepteurs µ, κ, δ-opioïdes → déplace les opioïdes en compétition → reversal immédiat.",
+    interactions:[{med:"Tous les opioïdes",sev:"haut"},{med:"Buprénorphine (reversal difficile)",sev:"mod"}],
+    surdosage:"Demi-vie courte 30–90 min vs opioïdes à longue demi-vie → RISQUE DE RE-NARCOTISATION. Prévoir perfusion si opioïde à longue durée.",
+    alertes:["⚠ Demi-vie COURTE — toujours surveiller après injection (risque re-narcotisation)","⚠ Dose en titration douce si dépendance (sevrage brutal grave)","Si morphine LP ou méthadone : perfusion naloxone nécessaire"]
+  },
+  {
+    nom:"Amiodarone",classe:"Anti-arythmique classe III (Vaughan Williams)",profils:["medecin"],
+    categories:["Arythmie","Arrêt cardiaque","Cardiologie"],
+    indications:["Fibrillation Ventriculaire (FV) réfractaire","Tachycardie Ventriculaire (TV) sans pouls","Fibrillation atriale à réponse ventriculaire rapide","Tachycardie jonctionnelle"],
+    dosages:[
+      {voie:"IV — ACR (FV/TV sans pouls)",valeur:"300 mg en bolus 20 mL G5%",note:"Après le 3ème choc (selon algo ACLS/ERC). 2ème dose : 150 mg",delai:"Immédiat"},
+      {voie:"IV — Tachycardie avec pouls",valeur:"150 mg en 10 min puis 1 mg/min × 6h",note:"Puis 0.5 mg/min × 18h. VVC préférable",delai:"5–15 min"},
+      {voie:"PO — Entretien",valeur:"200 mg 3×/j × 1 sem puis 200 mg/j",note:"Contrôle thyroïde et ECG régulier",delai:"Variable"}
+    ],
+    ci:["Dysthyroïdie non traitée","Allergie iode","Bloc AV haut degré sans pacemaker","Bradycardie sévère","Grossesse (risque foetal)"],
+    effets:["Bradycardie","Hypotension (IV)","Phlébite (voie périphérique)","Dépôts cornéens (long terme)","Pneumonie interstitielle","Dysthyroïdie (hypo/hyper)","Hépatotoxicité","Photosensibilité","Allongement QT"],
+    mecanisme:"Blocage canaux K+ → allongement de la période réfractaire (↑ QT). Effets secondaires : α/β-bloquant, inhibition canaux Ca²+ et Na+.",
+    interactions:[{med:"AVK (warfarine)",sev:"haut"},{med:"Digoxine",sev:"haut"},{med:"Quinolones",sev:"mod"},{med:"Ciclosporine",sev:"mod"}],
+    surdosage:"Bradycardie sévère, bloc AV, hypotension. Traitement : atropine, pacemaker externe, vasopresseurs.",
+    alertes:["⚠ VVC fortement conseillée (thrombophlébite sur veine périphérique)","⚠ Monitoring ECG continu obligatoire","Interactions nombreuses : vérifier tous les médicaments associés"]
+  },
+  {
+    nom:"Atropine",classe:"Anticholinergique — Parasympatholytique",profils:["medecin"],
+    categories:["Bradycardie","Antidote","Cardiologie"],
+    indications:["Bradycardie sinusale symptomatique","BAV 1er et 2ème degré Mobitz I","Intoxication aux organophosphorés (pesticides, agents de guerre)","Prémédication anesthésie (antisialogogue)"],
+    dosages:[
+      {voie:"IV — Bradycardie",valeur:"0.5–1 mg IVD",note:"Répéter toutes les 3–5 min. MINIMUM 0.5 mg. Max total 3 mg",delai:"1–2 min"},
+      {voie:"IV — Intoxication OP",valeur:"2–4 mg IVD puis titration",note:"Répéter toutes les 5–10 min jusqu'à atropinisation (bouche sèche, mydriase, FC 80–100)",delai:"1–2 min"},
+      {voie:"IM / SC",valeur:"0.5 mg",note:"Prémédication, antisialogogue (kétamine)",delai:"10–15 min"}
+    ],
+    ci:["Glaucome à angle fermé","Rétention urinaire","Iléus paralytique","Tachycardie sévère"],
+    effets:["Tachycardie (effet thérapeutique)","Sécheresse buccale/oculaire","Rétention urinaire","Mydriase","Constipation","Confusion (sujets âgés, fortes doses)","Hyperthermie"],
+    mecanisme:"Antagoniste compétitif des récepteurs muscariniques M1–M3 → bloque le tonus parasympathique (nerf vague) → ↑ FC + ↓ sécrétions.",
+    interactions:[{med:"Antidépresseurs tricycliques",sev:"mod"},{med:"Phénothiazines",sev:"mod"}],
+    surdosage:"Tachycardie, hyperthermie, confusion, rétention urinaire, peau sèche. Physostigmine (antidote) si signes centraux sévères.",
+    alertes:["⚠ Doses < 0.5 mg → bradycardie PARADOXALE par effet central","⚠ Intoxication OP : titrer JUSQU'AUX SIGNES D'ATROPINISATION (ne pas s'arrêter sur la dose)","BAV Mobitz II et BAV 3ème degré : atropine INEFFICACE → pacemaker"]
+  },
+  {
+    nom:"Lidocaïne",classe:"Anesthésique local — Anti-arythmique Ib",profils:["medecin"],
+    categories:["Anesthésie locale","Arythmie"],
+    indications:["Anesthésie locale (infiltration, topique)","Anesthésie locorégionale (bloc nerveux)","TV/FV réfractaire (alternative amiodarone)"],
+    dosages:[
+      {voie:"Infiltration locale (sans adré.)",valeur:"Max 4 mg/kg — lidocaïne 1–2%",note:"Aspirer avant injection. Délai 2–5 min",delai:"2–5 min"},
+      {voie:"Infiltration (avec adrénaline)",valeur:"Max 7 mg/kg",note:"Augmente durée d'action. CI extrémités",delai:"2–5 min"},
+      {voie:"IV — Arythmie ventriculaire",valeur:"Bolus 1–1.5 mg/kg puis 0.5 mg/kg/5 min",note:"Max 3 mg/kg total. Perfusion : 1–4 mg/min",delai:"1–2 min"}
+    ],
+    ci:["Bloc AV complet (IV)","Allergie aux amides","Injection intravasculaire accidentelle","Lidocaïne adrénalinée sur extrémités"],
+    effets:["Toxicité neurologique (acouphènes, vertiges, goût métallique, convulsions)","Bradycardie","Hypotension","Arrêt cardiaque (surdosage)"],
+    mecanisme:"Bloque les canaux Na+ voltage-dépendants de manière réversible → stabilisation membranaire → inhibition conduction nerveuse et automaticité myocardique.",
+    interactions:[{med:"Bêtabloquants",sev:"mod"},{med:"Amiodarone",sev:"mod"}],
+    surdosage:"Acouphènes → vertiges → convulsions → coma → ACR. ANTIDOTE : Intralipide 20% (émulsion lipidique) 1.5 mL/kg IV bolus.",
+    alertes:["⚠ Toujours aspirer avant d'injecter (injection IV accidentelle = ACR)","⚠ Lidocaïne adrénalinée JAMAIS sur extrémités (doigts, oreilles, nez, pénis) → ischémie","ANTIDOTE surdosage : Intralipide 20%"]
+  },
+  {
+    nom:"Acide Tranexamique (Exacyl/TXA)",classe:"Antifibrinolytique",profils:["medecin"],
+    categories:["Hémorragie","Traumatologie"],
+    indications:["Hémorragie traumatique (Golden Hour)","Hémorragie post-partum","Hémorragie chirurgicale","Saignement digestif haut"],
+    dosages:[
+      {voie:"IV — Trauma (adulte)",valeur:"1 g en 10 min puis 1 g en 8h",note:"⚠ Idéalement dans les 3 premières heures. Inutile et potentiellement néfaste > 3h",delai:"10–15 min"},
+      {voie:"IV — Enfant",valeur:"15–20 mg/kg dose de charge (max 1 g)",note:"",delai:"10 min"},
+      {voie:"IV — Post-partum",valeur:"1 g IVD puis 1 g si saignement continue",note:"",delai:"Immédiat"}
+    ],
+    ci:["CIVD active (relatif)","Thrombose veineuse profonde active","Antécédent de convulsions","Insuffisance rénale sévère (adapter dose)"],
+    effets:["Nausées/vomissements","Hypotension si injection trop rapide","Risque thromboembolique théorique","Convulsions (forte dose intrarachidienne)"],
+    mecanisme:"Analogue de la lysine → bloque les sites de liaison du plasminogène à la fibrine → inhibe la fibrinolyse → stabilise le caillot.",
+    interactions:[{med:"Facteurs coagulation concentrés",sev:"mod"}],
+    surdosage:"Thrombose. Monitoring clinique. Pas d'antidote spécifique.",
+    alertes:["⚠ EFFICACITÉ MAXIMALE dans les 3 premières heures post-trauma (étude CRASH-2)","⚠ Administration > 3h : risque de surmortalité par thrombose","Injection LENTE (10 min) pour éviter hypotension"]
+  },
+  {
+    nom:"Norépinéphrine",classe:"Catécholamine — Vasopresseur α1-agoniste",profils:["medecin"],
+    categories:["Vasopresseurs","Choc septique"],
+    indications:["Choc septique — vasopresseur de 1ère ligne","Choc vasoplégique","Hypotension réfractaire à l'expansion volémique"],
+    dosages:[
+      {voie:"IV — Perfusion continue (VVC)",valeur:"0.01–3 µg/kg/min",note:"Titrer sur PAM cible > 65 mmHg. VVC OBLIGATOIRE",delai:"Continu"}
+    ],
+    ci:["Hypovolémie non corrigée (corriger en premier)","Ischémie mésentérique (relatif)"],
+    effets:["Vasoconstriction périphérique intense","Bradycardie réflexe","Ischémie digitale (doses élevées)","Nécrose cutanée si extravasation"],
+    mecanisme:"Agoniste α1+++ et β1+ → ↑ résistances vasculaires systémiques + effet inotrope modéré. Effet α prédomine → PAM augmentée.",
+    interactions:[{med:"Halothane",sev:"haut"},{med:"IMAO",sev:"haut"},{med:"Antidépresseurs tricycliques",sev:"mod"}],
+    surdosage:"HTA sévère, bradycardie réflexe, ischémies périphériques. Réduire débit. Phentolamine si extravasation (0.1–0.2 mg infiltration locale).",
+    alertes:["⚠ VVC OBLIGATOIRE — extravasation = nécrose tissulaire grave","⚠ Toujours corriger l'hypovolémie avant","Surveillance PA invasive (artère radiale) idéale"]
+  },
+  {
+    nom:"NaCl 0.9% (Sérum Physiologique)",classe:"Cristalloïde isotonique",profils:["infirmier","medecin"],
+    categories:["Remplissage vasculaire","Déshydratation"],
+    indications:["Déshydratation","Hypovolémie / choc hémorragique (temporaire)","Rinçage de voies veineuses","Dilution médicaments IV","Nébulisation (diluant)"],
+    dosages:[
+      {voie:"IV — Adulte (remplissage)",valeur:"250–500 mL en 15–30 min",note:"Réévaluer après chaque bolus (FC, PA, diurèse)",delai:"Continu"},
+      {voie:"IV — Enfant",valeur:"10–20 mL/kg en 15–20 min",note:"Répéter selon réponse hémodynamique",delai:"Continu"},
+      {voie:"Nébulisation",valeur:"3–5 mL NaCl 0.9%",note:"Diluant pour salbutamol, ipratropium",delai:"-"}
+    ],
+    ci:["Hypernatrémie","Hypervolémie avérée","Insuffisance cardiaque décompensée (prudence)"],
+    effets:["Surcharge volémique si excès","Hyperchlorémie (acidose hyperchlorémique si volumes importants)","Œdèmes périphériques"],
+    mecanisme:"Soluté isotonique (308 mOsm/L) → expansion volémique intravasculaire et interstitielle. Seul 25% reste en intravasculaire.",
+    interactions:[],
+    surdosage:"Hyperhydratation, OAP. Furosémide si besoin.",
+    alertes:["Seul 25% du volume perfusé reste en intravasculaire","Préférer Ringer Lactate si volumes importants (moins hyperchlorémiant)"]
+  },
+  {
+    nom:"Paracétamol",classe:"Antalgique / Antipyrétique — Palier I (OMS)",profils:["infirmier","medecin","pharmacien"],
+    categories:["Antalgie","Antipyrétique"],
+    indications:["Douleur légère à modérée (EVA < 5)","Fièvre","Céphalées","Myalgies","Arthralgie"],
+    dosages:[
+      {voie:"IV (Perfalgan) — adulte",valeur:"1 g en 15 min",note:"Max 4 g/j (3 g si hépatopathie). Intervalle min 4h",delai:"5–10 min"},
+      {voie:"PO — adulte",valeur:"1 g toutes les 6h",note:"Max 4 g/j",delai:"30–60 min"},
+      {voie:"PO — enfant",valeur:"15 mg/kg toutes les 6h",note:"Max 60 mg/kg/j",delai:"30–60 min"},
+      {voie:"IV — Dose de charge (SFMU 2024)",valeur:"30 mg/kg (max 2 g) en 15 min",note:"Dose de charge pour analgésie rapide",delai:"5–10 min"}
+    ],
+    ci:["Insuffisance hépatique sévère","Allergie paracétamol (rare)"],
+    effets:["Hépatotoxicité (surdosage !)","Réactions allergiques cutanées (rares)","Thrombopénie (rare)"],
+    mecanisme:"Mécanisme central : inhibition de la COX-3 (isoforme centrale) + modulation du système sérotoninergique descendant. Effet périphérique minimal (distinction des AINS).",
+    interactions:[{med:"Warfarine (INR augmenté)",sev:"mod"},{med:"Isoniazide (hépatotox.)",sev:"mod"},{med:"Alcool",sev:"haut"}],
+    surdosage:"Hépatotoxicité retardée (24–72h) — cytolyse massive. ANTIDOTE : N-acétylcystéine (NAC) IV ou PO. Appel CAP (Centre Anti-Poisons).",
+    alertes:["⚠ SURDOSAGE = URGENCE hépatique — antidote : N-acétylcystéine","⚠ Attention CUMUL : paracétamol dans de nombreux médicaments OTC (Doliprane, Dafalgan, Efferalgan, Codoliprane)","3 g/j max si insuffisance hépatique ou alcoolisme chronique"]
+  },
+  {
+    nom:"Ibuprofène",classe:"AINS — Inhibiteur COX non sélectif",profils:["infirmier","pharmacien"],
+    categories:["Antalgie","Anti-inflammatoire","AINS"],
+    indications:["Douleur légère à modérée","Inflammation","Fièvre","Dysménorrhée","Traumatismes bénins"],
+    dosages:[
+      {voie:"PO — adulte",valeur:"400–600 mg toutes les 6–8h",note:"Toujours avec nourriture. Max 2400 mg/j (3200 si prescription médicale)",delai:"30–60 min"},
+      {voie:"PO — enfant",valeur:"5–10 mg/kg toutes les 6–8h",note:"Max 40 mg/kg/j. A partir de 3 mois",delai:"30–60 min"}
+    ],
+    ci:["Ulcère gastroduodénal actif","Insuffisance rénale sévère (DFG < 30)","3ème trimestre grossesse","Allergie AINS","IHC sévère","Insuffisance cardiaque décompensée"],
+    effets:["Ulcère/hémorragie digestive","Insuffisance rénale aiguë","Rétention hydrosodée","Hyperkaliémie","Réactions allergiques (urticaire, bronchospasme)","Élévation tensionnelle"],
+    mecanisme:"Inhibition réversible et non sélective COX-1 et COX-2 → ↓ synthèse prostaglandines → antalgique, antipyrétique, anti-inflammatoire.",
+    interactions:[{med:"Anticoagulants oraux",sev:"haut"},{med:"Lithium",sev:"haut"},{med:"Méthotrexate",sev:"haut"},{med:"IEC/ARA2",sev:"mod"}],
+    surdosage:"Nausées, vomissements, somnolence. Rarement : convulsions. Symptomatique. Pas d'antidote.",
+    alertes:["⚠ Toujours prendre avec nourriture (protection gastrique)","⚠ CI absolue 3ème trimestre grossesse (fermeture prématurée canal artériel)","Association AINS + anticoagulant = risque hémorragique majeur"]
+  },
+  {
+    nom:"Ventoline / Salbutamol",classe:"β2-agoniste courte durée d'action (SABA)",profils:["infirmier","medecin"],
+    categories:["Asthme / Bronchospasme","Bronchodilatateurs"],
+    indications:["Crise d'asthme légère à sévère","Bronchospasme","BPCO exacerbation","Hyperkaliémie (adjuvant)"],
+    dosages:[
+      {voie:"MDI (aérosol-doseur)",valeur:"2–4 bouffées de 100 µg",note:"Avec chambre d'inhalation. Peut répéter toutes les 20 min x3",delai:"3–5 min"},
+      {voie:"Nébulisation",valeur:"2.5–5 mg dans 3 mL NaCl 0.9%",note:"Sur 10–15 min. Répéter toutes les 20 min si besoin",delai:"5–10 min"},
+      {voie:"IV (asthme grave)",valeur:"0.1–0.2 µg/kg/min puis titration",note:"Milieu de soins intensifs uniquement",delai:"2–5 min"}
+    ],
+    ci:["Allergie salbutamol","Hypokaliémie sévère non corrigée","Thyrotoxicose (prudence)"],
+    effets:["Tachycardie","Tremblements fins","Hypokaliémie (doses répétées)","Céphalées","Nervosité","Palpitations"],
+    mecanisme:"Agoniste sélectif des récepteurs β2-adrénergiques → activation adénylate cyclase → ↑ AMPc → relaxation muscle lisse bronchique = bronchodilatation.",
+    interactions:[{med:"β-bloquants (antagonisme)",sev:"haut"},{med:"Théophylline",sev:"mod"}],
+    surdosage:"Tachycardie sévère, hypokaliémie. Traitement symptomatique. β-bloquant cardiosélectif si tachycardie menaçante.",
+    alertes:["⚠ Surveillance kaliémie si doses répétées ou traitement IV","Chambres d'inhalation obligatoires pour MDI (efficacité × 3–4)"]
+  },
+  {
+    nom:"Diazépam (Valium)",classe:"Benzodiazépine — Longue durée d'action",profils:["infirmier","medecin"],
+    categories:["Anxiolyse / Sédation","Anticonvulsivant","Myorelaxant"],
+    indications:["Convulsions / état de mal épileptique","Anxiété aiguë / agitation","Spasmes musculaires","Sevrage alcool (prévention DT)","Prémédication procédurale"],
+    dosages:[
+      {voie:"IV — Convulsions (adulte)",valeur:"0.1–0.3 mg/kg IV LENT",note:"Max 10 mg. Vitesse max 5 mg/min. Répéter après 5 min si besoin",delai:"1–3 min"},
+      {voie:"IR — Convulsions (enfant)",valeur:"0.5 mg/kg",note:"Valium rectal. Max 10 mg",delai:"5–10 min"},
+      {voie:"PO — Anxiété",valeur:"5–10 mg 2–3×/j",note:"Durée max : 4 semaines",delai:"30–60 min"}
+    ],
+    ci:["Insuffisance respiratoire sévère","Apnée du sommeil","Myasthénie","Intoxication alcool aiguë (prudence)","Grossesse 1er trimestre"],
+    effets:["Dépression respiratoire (dose-dépendant)","Somnolence excessive","Amnésie antérograde","Dépendance physique et psychique","Hypotension (IV)","Chute (sujet âgé)"],
+    mecanisme:"Potentialise l'action du GABA sur les récepteurs GABA-A (sous-unité γ) → hyperpolarisation neuronale → effets anxiolytique, myorelaxant, anticonvulsivant, sédatif.",
+    interactions:[{med:"Alcool",sev:"haut"},{med:"Opioïdes",sev:"haut"},{med:"Antidépresseurs",sev:"mod"}],
+    surdosage:"Somnolence, ataxie, dépression respiratoire. ANTIDOTE : Flumazénil 0.2 mg IV (à répéter). Demi-vie flumazénil courte → surveillance.",
+    alertes:["⚠ DÉPRESSION RESPIRATOIRE — avoir flumazénil disponible","⚠ JAMAIS associé à alcool ou opioïdes sans surveillance","Dépendance rapide — usage court terme uniquement (< 4 semaines)"]
+  },
+  {
+    nom:"Tramadol",classe:"Opioïde faible / IRSNA — Palier II (OMS)",profils:["infirmier","medecin"],
+    categories:["Antalgie","Opioïdes"],
+    indications:["Douleur modérée à sévère (EVA 4–7)","Insuffisance analgésique du palier I","Neuropathie douloureuse"],
+    dosages:[
+      {voie:"PO — adulte",valeur:"50–100 mg toutes les 4–6h",note:"Max 400 mg/j (300 mg si > 75 ans)",delai:"30–60 min"},
+      {voie:"IV lente",valeur:"50–100 mg dilué dans 100 mL NaCl en 15–30 min",note:"Max 400 mg/j. Ne jamais en bolus IVD",delai:"10–20 min"}
+    ],
+    ci:["Épilepsie non contrôlée","Association IMAO (< 14 j)","IHC sévère","< 12 ans","Tétanos"],
+    effets:["Nausées/vomissements (très fréquents — 30%)","Vertiges","Somnolence","Convulsions (seuil épileptogène abaissé)","Syndrome sérotoninergique","Dépendance modérée"],
+    mecanisme:"Double mécanisme : agoniste faible µ-opioïde (affinité 10× < morphine) + inhibition recapture sérotonine et noradrénaline (IRSNA).",
+    interactions:[{med:"ISRS / IRSN",sev:"haut"},{med:"IMAO",sev:"haut"},{med:"Triptans",sev:"mod"}],
+    surdosage:"Convulsions, dépression respiratoire modérée. Naloxone partiellement efficace (antagonise seulement la composante opioïde).",
+    alertes:["⚠ Seuil épileptogène abaissé — CI absolue si épilepsie","⚠ Syndrome sérotoninergique si associé à ISRS/tramadol/linézolide","Ne jamais injecter en bolus IV direct (convulsions)"]
+  },
+  {
+    nom:"Paracétamol-Codéine",classe:"Antalgique palier II — Opioïde faible",profils:["infirmier","medecin"],
+    categories:["Antalgie","Opioïdes"],
+    indications:["Douleur modérée insuffisamment soulagée par palier I seul"],
+    dosages:[
+      {voie:"PO — adulte",valeur:"1–2 cp (500 mg/30 mg) toutes les 6h",note:"Max 8 cp/j (4 g paracétamol + 240 mg codéine)"}
+    ],
+    ci:["< 12 ans","Allaitement","Asthme à l'aspirine","IHC sévère","Métaboliseurs ultrarapides CYP2D6 identifiés"],
+    effets:["Constipation","Somnolence","Nausées","Dépendance modérée","Surdosage paracétamol possible si cumul"],
+    mecanisme:"Codéine = prodrogue métabolisée en morphine (10%) par CYP2D6. Paracétamol : antalgique central.",
+    interactions:[{med:"Autres opioïdes",sev:"haut"},{med:"BZD",sev:"mod"},{med:"Inhibiteurs CYP2D6",sev:"mod"}],
+    surdosage:"Surdosage codéine : dépression respiratoire → Naloxone. Surdosage paracétamol → N-acétylcystéine.",
+    alertes:["⚠ Variabilité génétique CYP2D6 importante (métaboliseurs ultrarapides : effet opioïde majoré)","CI < 12 ans et allaitement (surdosage néonatal possible)"]
+  },
+  {
+    nom:"Héparine non fractionnée (HNF)",classe:"Anticoagulant — Antithrombine III",profils:["medecin"],
+    categories:["Anticoagulant","Cardiologie"],
+    indications:["SCA (NSTEMI/STEMI)","Embolie pulmonaire","TVP","AVC ischémique","Prévention thromboembolique","Fibrillation atriale"],
+    dosages:[
+      {voie:"IV — Bolus curatif",valeur:"80 UI/kg (max 5000 UI)",note:"Puis perfusion 18 UI/kg/h. Surveiller TCA : 60–100s (× 1.5–2.5 N)",delai:"Immédiat"},
+      {voie:"SC — Préventif",valeur:"5000 UI 2–3×/j",note:"",delai:"1–2h"}
+    ],
+    ci:["Hémorragie active","ATCD de TIH","Chirurgie intracrânienne récente","Endocardite infectieuse (relatif)"],
+    effets:["Hémorragie (principal)","Thrombocytopénie induite à l'héparine (TIH) J5–J21","Ostéoporose (long terme)","Hyperkaliémie (bloque aldostérone)","Transaminases ↑"],
+    mecanisme:"Potentialise l'antithrombine III → inhibition de la thrombine (IIa) et du facteur Xa → anticoagulation immédiate et réversible.",
+    interactions:[{med:"AVK",sev:"haut"},{med:"AINS",sev:"mod"},{med:"Antiagrégants",sev:"mod"}],
+    surdosage:"Hémorragie. ANTIDOTE : Sulfate de protamine — 1 mg neutralise 100 UI héparine. Dose max 50 mg IV lent.",
+    alertes:["⚠ ANTIDOTE : Sulfate de protamine","⚠ Surveiller plaquettes J0, J5, J10 (risque TIH)","TCA cible : 60–100 sec (1.5 à 2.5 × témoin)"]
+  },
+  {
+    nom:"Nitroglycérine (Trinitrine)",classe:"Dérivé nitré — Vasodilatateur veineux",profils:["medecin","pharmacien"],
+    categories:["Cardiologie","Antiangineux","HTA"],
+    indications:["Angor stable et instable","OAP cardiogénique (décharge ventriculaire)","HTA hypertensive urgence","SCA (en attente revascularisation)"],
+    dosages:[
+      {voie:"Sublinguale",valeur:"0.3–0.6 mg — spray ou comprimé",note:"Répéter après 5 min. Max 3 prises. Si douleur > 15 min → SAMU",delai:"1–3 min"},
+      {voie:"IV — Perfusion",valeur:"5–200 µg/min",note:"Titrer sur PA. Toujours en seringue électrique. Allonger le patient",delai:"1–2 min"}
+    ],
+    ci:["PAS < 90 mmHg","Prise inhibiteur PDE5 < 24h (sildénafil/Viagra) ou < 48h (tadalafil/Cialis)","Choc cardiogénique","Tamponnade","CMO obstructive","HTIC"],
+    effets:["Céphalées (vasodilatation cérébrale) — très fréquentes","Hypotension orthostatique","Flush","Tachycardie réflexe","Tolérance (tachyphylaxie) si usage prolongé"],
+    mecanisme:"Libère NO → active guanylate cyclase → ↑ GMPc → relaxation muscle lisse vasculaire. Effet veineux prédominant → ↓ précharge → ↓ OAP. Effet artériel à forte dose → ↓ postcharge.",
+    interactions:[{med:"Inhibiteurs PDE5 (Viagra, Cialis)",sev:"haut"},{med:"Antihypertenseurs",sev:"mod"}],
+    surdosage:"Hypotension sévère, tachycardie, méthémoglobinémie (forte dose). Position Trendelenburg. Phényléphrine si nécessaire.",
+    alertes:["⚠ CONTRE-INDICATION ABSOLUE si Viagra/Cialis < 24–48h — hypotension fulminante mortelle","⚠ Toujours allonger le patient (hypotension orthostatique)","Céphalées fréquentes et normales — rassurer le patient"]
+  },
+  {
+    nom:"Glucagen (Glucagon)",classe:"Hormone hyperglycémiante — Antagoniste insuline",profils:["medecin"],
+    categories:["Hypoglycémie","Endocrinologie"],
+    indications:["Hypoglycémie sévère (patient inconscient ou sans accès IV)","Surdosage β-bloquants (effet inotrope)","Surdosage bloqueurs calciques"],
+    dosages:[
+      {voie:"IM / SC — adulte",valeur:"1 mg",note:"Effet en 10–15 min. Retourner en PLS si inconscient",delai:"10–15 min"},
+      {voie:"IM / SC — enfant < 25 kg",valeur:"0.5 mg",note:"",delai:"10–15 min"}
+    ],
+    ci:["Phéochromocytome","Glucagonome","Insulinome (paradoxal)"],
+    effets:["Nausées/vomissements","Tachycardie transitoire","Hyperglycémie rebond"],
+    mecanisme:"Active adénylate cyclase hépatique → ↑ AMPc → glycogénolyse et néoglucogenèse → libération glucose → ↑ glycémie.",
+    interactions:[],
+    surdosage:"Hyperglycémie, hypokaliémie, nausées sévères. Symptomatique.",
+    alertes:["⚠ INEFFICACE si réserves glycogène hépatique épuisées (malnutrition, alcoolisme, anorexie) → glucose IV obligatoire","PLS obligatoire si inconscient (risque vomissements + apnée)","Contrôler glycémie 15 min après"]
+  },
+  {
+    nom:"Ondansétron",classe:"Antiémétique — Antagoniste 5-HT3",profils:["medecin"],
+    categories:["Antiémétique"],
+    indications:["Nausées/vomissements post-opératoires (NVPO)","Vomissements induits par chimiothérapie","Nausées aux opioïdes","Hyperemesis gravidarum"],
+    dosages:[
+      {voie:"IV lente",valeur:"4 mg en 2–5 min (ou 8 mg en 15 min)",note:"Répéter après 4h si besoin. Max 32 mg/24h",delai:"5–10 min"},
+      {voie:"PO",valeur:"8 mg 2×/j",note:"",delai:"30–60 min"}
+    ],
+    ci:["Allongement QTc congénital","Association apomorphine","Grossesse (1er T — relatif)"],
+    effets:["Céphalées","Constipation","Allongement QT (modéré)","Flush","Élévation transitoire transaminases"],
+    mecanisme:"Antagoniste sélectif des récepteurs 5-HT3 périphériques (tractus GI, nerf vague) et centraux (area postrema) → inhibe réflexe émétique.",
+    interactions:[{med:"Autres allongeurs QT",sev:"mod"},{med:"Tramadol (antagonisme)",sev:"bas"}],
+    surdosage:"Allongement QT. ECG, surveillance. Traitement symptomatique.",
+    alertes:["ECG si QT borderline avant injection IV","Ne pas injecter trop rapidement (QT)"]
+  },
+  {
+    nom:"Ceftriaxone",classe:"Céphalosporine 3ème génération (C3G) — Antibiotique",profils:["medecin","pharmacien"],
+    categories:["Antibiotique","Infectiologie"],
+    indications:["Méningite bactérienne","Sepsis/choc septique","Pneumonie communautaire","Pyélonéphrite aiguë","Fracture ouverte (prophylaxie)","Infection sexuellement transmissible (gonorrhée)"],
+    dosages:[
+      {voie:"IV ou IM — adulte",valeur:"1–2 g 1×/j",note:"Méningite : 2–4 g/j en 1 ou 2 injections",delai:"Bactéricidie sur 24h"},
+      {voie:"IV ou IM — enfant",valeur:"50–100 mg/kg/j",note:"Max 4 g/j",delai:"Bactéricidie sur 24h"}
+    ],
+    ci:["Allergie céphalosporines","Allergie pénicillines (vérifier — allergie croisée 1–2%)","Nouveau-né avec hyperbilirubinémie (déplace bilirubine)","Association IV avec calcium chez nouveau-né (précipitation)"],
+    effets:["Diarrhée (colite à Cl. difficile possible)","Allergie cutanée","Lithiase biliaire pseudotraitante (si > 10 j)","Phlébite"],
+    mecanisme:"Inhibe la synthèse de la paroi bactérienne par fixation sur les PLP (Protéines Liant la Pénicilline) → bactéricide large spectre gram+ et gram-.",
+    interactions:[{med:"Anticoagulants (INR ↑)",sev:"mod"},{med:"Aminosides (synergie)",sev:"bas"}],
+    surdosage:"Convulsions (fortes doses, IR). Symptomatique.",
+    alertes:["Vérifier allergie pénicillines AVANT injection","IM possible sans accès IV (méningite en pré-hospitalier)","Ne pas mélanger avec calcium dans même perfusion"]
+  },
+  {
+    nom:"Protoxyde d'azote (MEOPA/Kalinox)",classe:"Analgésique inhalé — Mélange équimolaire",profils:["infirmier","medecin"],
+    categories:["Antalgie","Anesthésie","Sédation procédurale"],
+    indications:["Analgésie procédurale (soins douloureux, sutures)","Anxiolyse légère","Douleur modérée EVA 4–6","Gestes de courte durée"],
+    dosages:[
+      {voie:"Inhalé — masque patient",valeur:"MEOPA 50% N₂O / 50% O₂",note:"Patient auto-administre. Délai action 3 min. Max 30 min consécutives",delai:"3–5 min"}
+    ],
+    ci:["Pneumothorax (expansion cavités aérifères)","Embolie gazeuse","HTIC","Déficit vitamine B12 / homocystéinémie","Occlusion intestinale","< 1 mois","Plongée dans les 24h"],
+    effets:["Nausées/vomissements","Euphorie légère","Dissociation légère","Hypoxie si fuite masque","Céphalées"],
+    mecanisme:"Antagoniste NMDA + interaction récepteurs opioïdes endogènes → analgésie et anxiolyse sans perte de conscience ni relaxation musculaire.",
+    interactions:[],
+    surdosage:"Hypoxie si N2O pur utilisé par erreur. Nausées, dissociation. Arrêt inhalation suffit.",
+    alertes:["⚠ TOUJOURS en mélange 50/50 — JAMAIS N₂O pur","⚠ Ventilation de la pièce obligatoire (risque exposition opérateur)","SpO2 continue obligatoire","Patient doit tenir lui-même le masque (sécurité de base)"]
+  },
+  {
+    nom:"Manitol 20%",classe:"Diurétique osmotique",profils:["medecin"],
+    categories:["Neurologie","HTIC","Syndrome d'écrasement"],
+    indications:["Œdème cérébral — HTIC","Syndrome d'écrasement (rhabdomyolyse)","Augmentation de la diurèse (toxiques dialysables)"],
+    dosages:[
+      {voie:"IV — HTIC",valeur:"0.25–1 g/kg de Manitol 20% en 15–30 min",note:"Répéter toutes les 4–6h si besoin. Surveiller Na+ et osmolalité",delai:"15–30 min"},
+      {voie:"IV — Rhabdomyolyse",valeur:"0.5 g/kg puis maintien diurèse > 1 mL/kg/h",note:"Associer alcalinisation urinaire (bicarbonate)",delai:"20–30 min"}
+    ],
+    ci:["Anémie sévère","Insuffisance cardiaque congestive sévère","Hyponatrémie < 130 mmol/L","Anurie"],
+    effets:["Expansion volémique initiale (risque OAP)","Déshydratation intracellulaire","Hyponatrémie paradoxale (rebond)","Hyperosmolarité"],
+    mecanisme:"Osmole active non réabsorbable filtrée par le glomérule → ↑ osmolalité plasmatique → attire eau du LCR et des cellules → ↓ PIC + diurèse osmotique.",
+    interactions:[],
+    surdosage:"Hyperosmolarité, insuffisance rénale, OAP. Dialyse si nécessaire.",
+    alertes:["⚠ Surveiller natrémie et osmolalité (effet rebond si hyperosmolarité > 320 mOsm/L)","Expansion volémique initiale : attention si insuffisance cardiaque"]
+  },
+  {
+    nom:"Ipratropium (Atrovent)",classe:"Anticholinergique inhalé — Bronchodilatateur",profils:["medecin"],
+    categories:["Asthme / Bronchospasme","Bronchodilatateurs"],
+    indications:["BPCO exacerbation aiguë (1ère intention)","Asthme sévère (en association au salbutamol)","Libération des voies aériennes"],
+    dosages:[
+      {voie:"Nébulisation",valeur:"0.5 mg dans 3 mL NaCl 0.9%",note:"Associer au salbutamol 2.5–5 mg. Répéter toutes les 20 min × 3",delai:"15–30 min"},
+      {voie:"MDI",valeur:"2–4 bouffées (40–80 µg)",note:"Max 12 bouffées/jour",delai:"15–30 min"}
+    ],
+    ci:["Allergie ipratropium","Glaucome angle fermé","Rétention urinaire"],
+    effets:["Sécheresse buccale","Tachycardie","Rétention urinaire","Mydriase si contact oculaire"],
+    mecanisme:"Antagoniste muscarinique M3 bronchique → bronchodilatation par levée du tonus cholinergique (parasympathique). Complément au β2-agoniste.",
+    interactions:[],
+    surdosage:"Anticholinergique : tachycardie, sécheresse, rétention. Symptomatique.",
+    alertes:["Eviter contact avec les yeux (mydriase)","Association salbutamol + ipratropium plus efficace que chaque molécule seule en asthme grave"]
+  },
+  {
+    nom:"Acide Acétylsalicylique (Aspirine)",classe:"AINS — Antiagrégant plaquettaire irréversible",profils:["infirmier","medecin","pharmacien"],
+    categories:["Antiagrégant plaquettaire","Antalgie","AINS","Cardiologie"],
+    indications:["SCA — dose de charge","AVC ischémique","Antiagrégation au long cours (post-IDM, AOMI)","Douleur légère / fièvre (antalgique)"],
+    dosages:[
+      {voie:"PO — SCA (dose de charge)",valeur:"250–500 mg à croquer (ou IV)","note":"Une seule fois. Puis 75–100 mg/j en entretien",delai:"30 min (PO)"},
+      {voie:"PO — Antiagrégant entretien",valeur:"75–100 mg 1×/j","note":"",delai:"-"},
+      {voie:"PO — Antalgique",valeur:"500 mg – 1 g toutes les 6–8h","note":"Max 3 g/j",delai:"30–60 min"}
+    ],
+    ci:["< 16 ans (Syndrome de Reye)","Ulcère gastroduodénal actif","3ème trimestre grossesse","Hémophilie","Allergie AINS","Insuffisance hépatique sévère"],
+    effets:["Hémorragie digestive","Ulcère gastrique","Acouphènes (surdosage)","Bronchospasme (asthme à l'aspirine)","Allongement saignement"],
+    mecanisme:"Acétylation irréversible de la COX-1 plaquettaire → inhibition définitive TXA2 → antiagrégation durable (toute la vie du plaquette = 7–10 j). COX-2 : anti-inflammatoire.",
+    interactions:[{med:"Anticoagulants oraux",sev:"haut"},{med:"AINS",sev:"haut"},{med:"Méthotrexate",sev:"haut"}],
+    surdosage:"Salicylisme : acouphènes, vertiges, hyperthermie, acidose métabolique. Alcalinisation urinaire + dialyse si grave.",
+    alertes:["⚠ JAMAIS < 16 ans (syndrome de Reye — encéphalopathie hépatique mortelle)","⚠ Arrêter 7–10 jours avant chirurgie élective","En urgence cardiovasculaire : CROQUER le comprimé (absorption plus rapide)"]
+  },
+  {
+    nom:"Lovenox (Énoxaparine)",classe:"Héparine de Bas Poids Moléculaire (HBPM)",profils:["medecin"],
+    categories:["Anticoagulant","Cardiologie"],
+    indications:["SCA NSTEMI","AVC ischémique cardioembolique","TVP / Embolie pulmonaire","Prévention thromboembolique chirurgicale"],
+    dosages:[
+      {voie:"SC — Curatif adulte",valeur:"1 mg/kg × 2/j ou 1.5 mg/kg × 1/j",note:"Adapté au poids. Réduire si DFG 15–30 : 1 mg/kg × 1/j",delai:"3–5h"},
+      {voie:"SC — Préventif",valeur:"40 mg 1×/j",note:"",delai:"-"}
+    ],
+    ci:["DFG < 15 mL/min","Hémorragie active","ATCD TIH","Prothèse valvulaire (HBPM insuffisante)"],
+    effets:["Hémorragie","Hématome injection","TIH (plus rare qu'HNF)","Hyperkalémie"],
+    mecanisme:"Inhibition sélective facteur Xa (ratio anti-Xa/anti-IIa ≈ 3.6) par potentialisation antithrombine III.",
+    interactions:[{med:"AVK",sev:"haut"},{med:"AINS",sev:"mod"}],
+    surdosage:"Hémorragie. Protamine SC partiellement efficace (neutralise 60% anti-Xa).",
+    alertes:["⚠ CI si DFG < 15 — utiliser HNF en cas d'IR sévère","Surveiller plaquettes si traitement > 5 jours (TIH)","Mesure anti-Xa si poids extrêmes (< 40 kg ou > 100 kg)"]
+  },
+  {
+    nom:"Hydroxyzine (Atarax)",classe:"Antihistaminique H1 — Anxiolytique",profils:["cump","medecin"],
+    categories:["Anxiolyse / Sédation","Antihistaminique"],
+    indications:["Anxiété légère à modérée","Prurit","Urticaire aiguë","Prémédication anesthésie","Insomnie légère"],
+    dosages:[
+      {voie:"PO",valeur:"25–100 mg 3–4×/j",note:"Max 300 mg/j",delai:"30–60 min"},
+      {voie:"IM",valeur:"25–100 mg",note:"Prémédication 30–60 min avant",delai:"15–30 min"}
+    ],
+    ci:["Glaucome angle fermé","Rétention urinaire","Allongement QTc","Grossesse (relatif)","Allaitement"],
+    effets:["Somnolence (effet thérapeutique)","Sécheresse buccale","Constipation","Allongement QT","Effets anticholinergiques"],
+    mecanisme:"Antagoniste H1 périphérique et central + effets anticholinergiques + musculotrope → sédation, anxiolyse, antihistaminique.",
+    interactions:[{med:"Autres allongeurs QT",sev:"mod"},{med:"Alcool",sev:"mod"},{med:"Anticholinergiques",sev:"mod"}],
+    surdosage:"Sédation excessive, anticholinergique. Symptomatique. Pas d'antidote.",
+    alertes:["Effet anticholinergique : attention sujet âgé (confusion, rétention urinaire)","Pas de risque de dépendance (avantage vs BZD)"]
+  },
+  {
+    nom:"Citalopram",classe:"ISRS — Inhibiteur Sélectif Recapture Sérotonine",profils:["cump","pharmacien"],
+    categories:["Antidépresseur","Psychiatrie"],
+    indications:["Dépression majeure","TAG — Trouble Anxieux Généralisé","Trouble panique","TOC"],
+    dosages:[
+      {voie:"PO",valeur:"20 mg 1×/j (matin)",note:"Augmenter à 40 mg après 2 semaines si besoin. Délai d'efficacité : 2–4 semaines",delai:"2–4 semaines (effet antidépresseur)"}
+    ],
+    ci:["Association IMAO < 14 jours","QTc long congénital","Doses > 40 mg (risque QT)","Hypomanie/manie non stabilisée"],
+    effets:["Nausées (début de traitement)","Insomnie ou hypersomnie","Agitation initiale","Dysfonction sexuelle","Allongement QT dose-dépendant","Hyponatrémie (SIADH, sujets âgés)"],
+    mecanisme:"Bloque sélectivement le transporteur de recapture de la sérotonine (SERT) → ↑ [sérotonine] synaptique → effet antidépresseur après 2–4 semaines.",
+    interactions:[{med:"IMAO",sev:"haut"},{med:"Tramadol (sd sérotoninergique)",sev:"haut"},{med:"Triptans",sev:"mod"}],
+    surdosage:"Syndrome sérotoninergique (triade : agitation + anomalies neurovégétatives + myoclonies). Cyproheptadine, benzodiazépines, soins de support.",
+    alertes:["⚠ RISQUE SUICIDAIRE en début de traitement (2 premières semaines) — surveillance ++","⚠ Syndrome sérotoninergique si association IMAO/tramadol/lithium","Jamais arrêter brutalement (syndrome de sevrage : vertiges, paresthésies)"]
+  },
+  {
+    nom:"Burinex (Bumétanide)",classe:"Diurétique de l'anse",profils:["medecin"],
+    categories:["Cardiologie","Diurétiques","Insuffisance rénale"],
+    indications:["Insuffisance cardiaque congestive / OAP","Insuffisance rénale avec surcharge hydrosodée","Hypertension réfractaire","Ascite cirrhotique"],
+    dosages:[
+      {voie:"IV",valeur:"1–2 mg en 2 min",note:"Effet diurétique en 15–30 min. Répéter après 20 min si besoin",delai:"15–30 min"},
+      {voie:"PO",valeur:"0.5–2 mg/j",note:"Max 10 mg/j en cas de résistance",delai:"30–60 min"}
+    ],
+    ci:["Anurie","Insuffisance rénale aiguë par néphrotoxique","Déshydratation sévère","Allergie sulfamides (attention)"],
+    effets:["Hypokaliémie (principale)","Hyponatrémie","Hypomagnésémie","Déshydratation","Hyperuricémie (goutte)","Ototoxicité (forte dose)"],
+    mecanisme:"Inhibe le cotransporteur Na+/K+/2Cl- dans la branche ascendante de l'anse de Henle → diurèse massive.",
+    interactions:[{med:"Digitale (hypokaliémie potentialise)",sev:"haut"},{med:"Aminosides (ototoxicité)",sev:"haut"},{med:"Lithium",sev:"haut"}],
+    surdosage:"Déshydratation sévère, hypokaliémie grave (arythmies). Réhydratation IV, supplémentation K+.",
+    alertes:["⚠ Surveiller kaliémie, natrémie, créatinine","Supplémenter K+ si kaliémie < 3.5 mEq/L","100× plus puissant que le furosémide mg pour mg"]
+  },
+  {
+    nom:"ViperFav",classe:"Immunoglobulines antivenimeuses — Antivenin vipère européenne",profils:["medecin"],
+    categories:["Antidote / Envenimation"],
+    indications:["Envenimation par vipère européenne (Vipera aspis, berus) avec signes sévères","Grade II (syndrome inflammatoire extensif) et Grade III (systémique)"],
+    dosages:[
+      {voie:"IV — Perfusion",valeur:"1 flacon (4 mL, 100 mg) dans 100 mL NaCl 0.9% en 60 min",note:"Répéter si aggravation ou absence d'amélioration après 6h",delai:"60 min (perfusion)"}
+    ],
+    ci:["Allergie protéines équines (vérifier — relatif en urgence)"],
+    effets:["Réaction anaphylactoïde/anaphylaxie (10–15%)","Maladie sérique à J7–J14 (fièvre, arthralgies, urticaire)"],
+    mecanisme:"Fragments Fab2 d'anticorps polyclonaux équins spécifiques neutralisent les venins vipérins (phospholipases, hyaluronidases, protéases).",
+    interactions:[],
+    surdosage:"Surdosage peu probable. Surveillance habituelle.",
+    alertes:["⚠ TOUJOURS avoir adrénaline prête (réaction anaphylactoïde dans 10–15% des cas)","Indication stricte : Grade II/III — pas si Grade I (rougeur locale seule)","Critères Grade III : hypotension, saignements, trouble conscience"]
+  },
+  {
+    nom:"Méthadone",classe:"Opioïde de substitution — Agoniste µ longue demi-vie",profils:["pharmacien"],
+    categories:["Traitement Substitutif Opioïdes (TSO)","Addiction"],
+    indications:["Dépendance aux opioïdes (héroïne, morphine)","Traitement de substitution (TSO)"],
+    dosages:[
+      {voie:"PO — Solution buvable",valeur:"20–40 mg/j initialement",note:"Titration progressive. Prise unique quotidienne supervisée. Délai d'action 4–6h",delai:"4–6h"}
+    ],
+    ci:["Dépression respiratoire non assistée","Association IMAO","Antécédent d'hypersensibilité"],
+    effets:["Constipation (sévère, traiter systématiquement)","Somnolence","Allongement QT (dose-dépendant)","Surdosage si prise non contrôlée","Transpiration"],
+    mecanisme:"Agoniste µ-opioïde à longue demi-vie (24–36h) → prévient syndrome de manque sans pic euphorisant si prise orale → réduction craving.",
+    interactions:[{med:"Tous allongeurs QT",sev:"haut"},{med:"Rifampicine (diminue efficacité)",sev:"haut"},{med:"Benzodiazépines",sev:"mod"}],
+    surdosage:"Triade opioïde + allongement QT → torsades de pointes. Naloxone + défibrillation si nécessaire.",
+    alertes:["⚠ ECG AVANT INITIATION (QTc)","⚠ Risque létal si prise non supervisée (détournement)","Interactions médicamenteuses nombreuses — vérifier systématiquement"]
+  },
+  {
+    nom:"Lorazépam",classe:"Benzodiazépine — Durée d'action intermédiaire",profils:["pharmacien","medecin"],
+    categories:["Anxiolyse / Sédation","Anticonvulsivant"],
+    indications:["Anxiété aiguë / crise de panique","Insomnie","Crise d'angoisse","Convulsions (alternative au diazépam)"],
+    dosages:[
+      {voie:"PO",valeur:"0.5–2.5 mg au coucher ou en crise",note:"Max 7.5 mg/j. Durée max 4 semaines",delai:"30–60 min"},
+      {voie:"IV — Convulsions",valeur:"0.1 mg/kg (max 4 mg)",note:"Répéter après 5–10 min si nécessaire",delai:"2–5 min"}
+    ],
+    ci:["IR respiratoire","Myasthénie","Apnée du sommeil","Grossesse","Allergie BZD"],
+    effets:["Somnolence","Dépendance","Syndrome de sevrage à l'arrêt brutal","Amnésie antérograde"],
+    mecanisme:"Potentialise GABA-A → anxiolyse et sédation.",
+    interactions:[{med:"Alcool",sev:"haut"},{med:"Opioïdes",sev:"haut"}],
+    surdosage:"Dépression respiratoire, coma. Antidote : Flumazénil.",
+    alertes:["⚠ Dépendance — jamais > 4 semaines","Arrêt progressif obligatoire (syndrome de sevrage convulsivant possible)"]
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// STATE & AUTH
+// ═══════════════════════════════════════════════════
+let currentProfile = 'all';
+let isFormateur = false;
+let currentTab = 'compendium';
+
+// ═════ DÉMARRAGE DIRECT
+window.addEventListener('DOMContentLoaded', () => {
+  loadDB();
+  loadProfils();
+  renderProfilBar();
+  rebuildProfilCheckboxes();
+  renderSidebar();
+  showHome();
+});
+
+// Persist DB in localStorage
+function loadDB() {
+  const saved = localStorage.getItem('compendium_db');
+  if (saved) { try { DB = JSON.parse(saved); } catch(e){} }
+}
+function saveDB() {
+  localStorage.setItem('compendium_db', JSON.stringify(DB));
+}
+
+// ═════ LOGIN
+function openLoginModal() {
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+  document.getElementById('l-err').style.display = 'none';
+  document.getElementById('login-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('l-user').focus(), 100);
+}
+function closeLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
+}
+function doLogin() {
+  const u = document.getElementById('l-user').value.trim().toUpperCase();
+  const p = document.getElementById('l-pass').value.trim().toUpperCase();
+  if (u === 'FORMATEUR' && p === 'SAMU') {
+    isFormateur = true;
+    closeLoginModal();
+    document.getElementById('role-badge').style.display = 'inline-block';
+    document.getElementById('login-btn').style.display = 'none';
+    document.getElementById('logout-btn').style.display = 'inline-block';
+    document.getElementById('tabs').style.display = 'block';
+    renderProfilBar();
+    renderSidebar();
+    showHome();
+  } else {
+    document.getElementById('l-err').style.display = 'block';
+  }
+}
+function doLogout() {
+  isFormateur = false;
+  document.getElementById('role-badge').style.display = 'none';
+  document.getElementById('logout-btn').style.display = 'none';
+  document.getElementById('login-btn').style.display = 'inline-block';
+  document.getElementById('tabs').style.display = 'none';
+  currentTab = 'compendium';
+  renderProfilBar();
+  renderSidebar();
+  showHome();
+}
+document.addEventListener('keydown', e => {
+  if (document.getElementById('login-modal').style.display !== 'none' && e.key === 'Enter') doLogin();
+});
+
+// ═══════════════════════════════════════════════════
+// PROFILS
+// ═══════════════════════════════════════════════════
+let PROFILS = [
+  {id:'infirmier',  label:'Infirmier',  emoji:'🩺',  color:'#3b82f6'},
+  {id:'medecin',   label:'Médecin',    emoji:'👨‍⚕️', color:'#22c55e'},
+  {id:'cump',      label:'CUMP',       emoji:'🧠',  color:'#a855f7'},
+  {id:'pharmacien',label:'Pharmacien', emoji:'💊',  color:'#eab308'},
+];
+
+function loadProfils() {
+  const s = localStorage.getItem('compendium_profils');
+  if (s) { try { PROFILS = JSON.parse(s); } catch(e){} }
+}
+function saveProfils() {
+  localStorage.setItem('compendium_profils', JSON.stringify(PROFILS));
+}
+loadProfils();
+
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function renderProfilBar() {
+  const bar = document.getElementById('profil-btns');
+  let html = `<button class="pbtn ${currentProfile==='all'?'on':''}" data-p="all" onclick="setProfile(this)" style="${currentProfile==='all'?'background:rgba(226,232,240,0.08);border-color:#3a4f6a;color:#e2e8f0':''}">Tous</button>`;
+  PROFILS.forEach(p => {
+    const active = currentProfile === p.id;
+    const style = active ? `background:${hexToRgba(p.color,0.15)};border-color:${hexToRgba(p.color,0.5)};color:${p.color}` : '';
+    html += `<button class="pbtn ${active?'on':''}" data-p="${p.id}" onclick="setProfile(this)" style="${style}">${p.emoji} ${p.label}</button>`;
+  });
+  if (isFormateur) {
+    html += `<button onclick="showTab('profils', document.querySelectorAll('.tab')[2])" style="background:transparent;border:1px dashed var(--border2);color:var(--text3);padding:5px 10px;border-radius:20px;font-size:11px;margin-left:4px">✏️ Gérer</button>`;
+  }
+  bar.innerHTML = html;
+}
+
+// ═════ GESTION PROFILS (formateur)
+function renderProfilEditList() {
+  const list = document.getElementById('profil-edit-list');
+  list.innerHTML = PROFILS.map((p,i) => `
+    <div class="med-edit-row">
+      <div class="mer-left" style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:24px">${p.emoji}</span>
+        <div>
+          <div class="mer-nom" style="display:flex;align-items:center;gap:8px">
+            ${p.label}
+            <span style="font-size:11px;font-family:var(--mono);background:${hexToRgba(p.color,0.15)};color:${p.color};border:1px solid ${hexToRgba(p.color,0.4)};padding:2px 8px;border-radius:4px">${p.id}</span>
+          </div>
+          <div class="mer-cls">Couleur : ${p.color} · ${DB.filter(m=>m.profils.includes(p.id)).length} médicament(s)</div>
+        </div>
+      </div>
+      <div class="mer-btns">
+        <button class="btn-edit-med" onclick="openProfilModal(${i})">✏️ Modifier</button>
+        <button class="btn-del-med" onclick="deleteProfil(${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openProfilModal(idx) {
+  const p = idx !== null ? PROFILS[idx] : null;
+  document.getElementById('modal-profil-title').textContent = p ? `Modifier : ${p.label}` : 'Nouveau profil';
+  document.getElementById('ep-idx').value = idx !== null ? idx : '';
+  document.getElementById('ep-id').value = p?.id || '';
+  document.getElementById('ep-label').value = p?.label || '';
+  document.getElementById('ep-emoji').value = p?.emoji || '';
+  document.getElementById('ep-color').value = p?.color || '#3b82f6';
+  updateProfilPreview();
+  document.getElementById('modal-profil').style.display = 'flex';
+}
+function closeProfilModal() { document.getElementById('modal-profil').style.display = 'none'; }
+
+function updateProfilPreview() {
+  const color = document.getElementById('ep-color').value || '#3b82f6';
+  const label = document.getElementById('ep-label').value || 'Profil';
+  const emoji = document.getElementById('ep-emoji').value || '';
+  const prev = document.getElementById('ep-preview');
+  try {
+    prev.style.background = hexToRgba(color, 0.15);
+    prev.style.color = color;
+    prev.style.borderColor = hexToRgba(color, 0.4);
+  } catch(e){}
+  prev.textContent = `${emoji} ${label}`;
+}
+document.addEventListener('input', e => {
+  if (['ep-color','ep-label','ep-emoji'].includes(e.target.id)) updateProfilPreview();
+});
+
+function saveProfil() {
+  const idxRaw = document.getElementById('ep-idx').value;
+  const id = document.getElementById('ep-id').value.trim().toLowerCase().replace(/\s+/g,'_');
+  const label = document.getElementById('ep-label').value.trim();
+  const emoji = document.getElementById('ep-emoji').value.trim();
+  const color = document.getElementById('ep-color').value.trim();
+  if (!id || !label) { alert('Identifiant et nom requis'); return; }
+  // Vérifier unicité si nouveau
+  if (idxRaw === '' && PROFILS.find(p => p.id === id)) { alert(`L'identifiant "${id}" existe déjà`); return; }
+  const profil = {id, label, emoji, color};
+  if (idxRaw !== '') {
+    const oldId = PROFILS[parseInt(idxRaw)].id;
+    PROFILS[parseInt(idxRaw)] = profil;
+    // Mettre à jour les médicaments qui utilisaient l'ancien id
+    if (oldId !== id) {
+      DB.forEach(m => { if(m.profils.includes(oldId)) { m.profils = m.profils.map(p=>p===oldId?id:p); } });
+      saveDB();
+    }
+  } else {
+    PROFILS.push(profil);
+  }
+  saveProfils();
+  closeProfilModal();
+  renderProfilBar();
+  renderProfilEditList();
+  // Mettre à jour les checkboxes dans la modal médicament
+  rebuildProfilCheckboxes();
+}
+
+function deleteProfil(idx) {
+  const p = PROFILS[idx];
+  const count = DB.filter(m=>m.profils.includes(p.id)).length;
+  const msg = count > 0
+    ? `Supprimer le profil "${p.label}" ?\n⚠ ${count} médicament(s) ont ce profil — il sera retiré de leurs fiches.`
+    : `Supprimer le profil "${p.label}" ?`;
+  if (!confirm(msg)) return;
+  // Retirer ce profil de tous les médicaments
+  DB.forEach(m => { m.profils = m.profils.filter(pr => pr !== p.id); });
+  PROFILS.splice(idx, 1);
+  saveProfils(); saveDB();
+  if (currentProfile === p.id) { currentProfile = 'all'; }
+  renderProfilBar();
+  renderProfilEditList();
+  renderSidebar();
+  rebuildProfilCheckboxes();
+}
+
+function rebuildProfilCheckboxes() {
+  const container = document.getElementById('profil-checkboxes');
+  if (!container) return;
+  container.innerHTML = PROFILS.map(p =>
+    `<label style="display:flex;align-items:center;gap:5px;font-size:13px;text-transform:none;letter-spacing:0">
+      <input type="checkbox" value="${p.id}" class="cp"> ${p.emoji} ${p.label}
+    </label>`).join('');
+}
+
+// ═════ PROFIL
+function setProfile(btn) {
+  currentProfile = btn.dataset.p;
+  renderProfilBar();
+  renderSidebar();
+  showHome();
+}
+
+// ═════ TABS (formateur)
+function showTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  if (el) el.classList.add('on');
+  currentTab = tab;
+  if (tab === 'compendium') {
+    document.getElementById('view-edit').style.display = 'none';
+    document.getElementById('view-profils').style.display = 'none';
+    showHome();
+  } else if (tab === 'edit') {
+    hideAll();
+    document.getElementById('view-edit').style.display = 'block';
+    renderEditList();
+  } else if (tab === 'profils') {
+    hideAll();
+    document.getElementById('view-profils').style.display = 'block';
+    renderProfilEditList();
+  }
+}
+
+// ═════ SIDEBAR
+function getFilteredDB() {
+  if (currentProfile === 'all') return DB;
+  return DB.filter(m => m.profils.includes(currentProfile));
+}
+
+function renderSidebar() {
+  const meds = getFilteredDB();
+  const cats = {};
+  meds.forEach(m => m.categories.forEach(c => {
+    if (!cats[c]) cats[c] = [];
+    cats[c].push(m);
+  }));
+
+  // stats
+  const catKeys = Object.keys(cats);
+  document.getElementById('home-stats').innerHTML = `
+    <div class="hstat"><div class="hstat-n" style="color:var(--green)">${meds.length}</div><div class="hstat-l">Médicaments</div></div>
+    <div class="hstat"><div class="hstat-n" style="color:var(--blue)">${catKeys.length}</div><div class="hstat-l">Catégories</div></div>
+    <div class="hstat"><div class="hstat-n" style="color:var(--yellow)">SFMU</div><div class="hstat-l">Source</div></div>
+  `;
+
+  let html = '';
+  catKeys.sort().forEach(cat => {
+    html += `<div class="sb-section">
+      <div class="sb-cat">${cat}<span class="sb-cat-count">${cats[cat].length}</span></div>`;
+    cats[cat].sort((a,b)=>a.nom.localeCompare(b.nom)).forEach(m => {
+      const col = m.profils.includes('medecin')? 'var(--green)' : m.profils.includes('infirmier')? 'var(--blue)' : m.profils.includes('cump')? 'var(--purple)' : 'var(--yellow)';
+      html += `<div class="sb-med" data-nom="${m.nom}" onclick="showMed('${esc(m.nom)}')" >
+        <span class="sb-dot" style="background:${col}"></span>${m.nom}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('sb-content').innerHTML = html;
+}
+
+function esc(s) { return s.replace(/'/g,"\\'"); }
+
+// ═════ VIEWS
+function hideAll() {
+  ['view-home','view-med','view-search','view-edit','view-profils'].forEach(id => document.getElementById(id).style.display='none');
+}
+function showHome() {
+  hideAll();
+  document.getElementById('view-home').style.display = 'block';
+  document.querySelectorAll('.sb-med').forEach(el => el.classList.remove('on'));
+}
+
+function showMed(nom) {
+  const med = DB.find(m => m.nom === nom);
+  if (!med) return;
+  if (currentTab !== 'compendium') { showTab('compendium', document.querySelector('.tab')); }
+  hideAll();
+  document.getElementById('view-med').style.display = 'block';
+  // sidebar highlight
+  document.querySelectorAll('.sb-med').forEach(el => el.classList.toggle('on', el.dataset.nom === nom));
+
+  const profTag = p => `<span class="mpill mpill-${p}">${{infirmier:'🩺 Infirmier',medecin:'👨‍⚕️ Médecin',cump:'🧠 CUMP',pharmacien:'💊 Pharmacien'}[p]}</span>`;
+  const alertHtml = (med.alertes||[]).map(a => `
+    <div class="alert-bloc ${a.includes('⚠')?'danger':'info'}"><span class="alert-icon">${a.includes('⚠')?'⚠':'ℹ'}</span><span>${a.replace('⚠','').trim()}</span></div>
+  `).join('');
+
+  const dosageHtml = (med.dosages||[]).map(d => `
+    <div class="dose-item">
+      <div class="dose-voie">${d.voie}</div>
+      <div class="dose-val">${d.valeur}</div>
+      ${d.note?`<div class="dose-note">${d.note}</div>`:''}
+      ${d.delai?`<div class="dose-delai">⏱ ${d.delai}</div>`:''}
+    </div>
+  `).join('');
+
+  const liHtml = arr => (arr||[]).map(x=>`<li>${x}</li>`).join('');
+
+  const interHtml = (med.interactions||[]).length ? `
+    <div class="section">
+      <div class="section-head" style="background:var(--orange-bg)"><span class="sh-bar" style="background:var(--orange)"></span>Interactions médicamenteuses</div>
+      <div class="section-body">
+        ${med.interactions.map(i=>`<div class="interaction-item"><span class="int-sev ${i.sev}"></span><div class="int-txt"><strong>${i.med}</strong> — risque ${i.sev==='haut'?'ÉLEVÉ':i.sev==='mod'?'modéré':'faible'}</div></div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const surHtml = med.surdosage ? `
+    <div class="section" style="grid-column:1/-1">
+      <div class="section-head" style="background:var(--red-bg)"><span class="sh-bar" style="background:var(--red)"></span>Surdosage & Antidote</div>
+      <div class="section-body"><div class="surdosage-box"><p>${med.surdosage}</p></div></div>
+    </div>` : '';
+
+  document.getElementById('view-med').innerHTML = `
+    <div class="med-top">
+      <div class="med-nom">${med.nom}</div>
+      <div class="med-classe">${med.classe}</div>
+      <div class="med-profils">${(med.profils||[]).map(profTag).join('')}</div>
+      <div class="med-cats">${(med.categories||[]).map(c=>`<span>● ${c}</span>`).join('')}</div>
+    </div>
+    ${alertHtml}
+    <div class="med-grid">
+      <div class="section">
+        <div class="section-head" style="background:var(--green-bg)"><span class="sh-bar" style="background:var(--green)"></span>Indications</div>
+        <div class="section-body"><ul class="ul-med">${liHtml(med.indications)}</ul></div>
+      </div>
+      <div class="section">
+        <div class="section-head" style="background:var(--blue-bg)"><span class="sh-bar" style="background:var(--blue)"></span>Dosages & Voies d'admin.</div>
+        <div class="section-body">${dosageHtml}</div>
+      </div>
+      <div class="section">
+        <div class="section-head" style="background:var(--teal-bg)"><span class="sh-bar" style="background:var(--teal)"></span>Mécanisme d'action</div>
+        <div class="section-body"><p>${med.mecanisme||'Non renseigné'}</p></div>
+      </div>
+      <div class="section">
+        <div class="section-head" style="background:var(--red-bg)"><span class="sh-bar" style="background:var(--red)"></span>Contre-indications</div>
+        <div class="section-body"><ul class="ul-med">${liHtml(med.ci)}</ul></div>
+      </div>
+      <div class="section">
+        <div class="section-head" style="background:var(--orange-bg)"><span class="sh-bar" style="background:var(--orange)"></span>Effets indésirables</div>
+        <div class="section-body"><ul class="ul-med">${liHtml(med.effets)}</ul></div>
+      </div>
+      ${interHtml}
+      ${surHtml}
+    </div>
+    ${isFormateur ? `<div style="margin-top:16px"><button class="btn-edit-med" onclick="openModal('${esc(nom)}')">✏️ Modifier cette fiche</button> <button class="btn-del-med" onclick="deleteMed('${esc(nom)}')">🗑 Supprimer</button></div>` : ''}
+  `;
+}
+
+// ═════ SEARCH
+function doSearch(val) {
+  if (!val.trim()) {
+    if (document.getElementById('view-search').style.display !== 'none') showHome();
+    return;
+  }
+  const q = val.toLowerCase();
+  const res = DB.filter(m =>
+    m.nom.toLowerCase().includes(q) ||
+    m.classe.toLowerCase().includes(q) ||
+    (m.indications||[]).some(i=>i.toLowerCase().includes(q)) ||
+    (m.categories||[]).some(c=>c.toLowerCase().includes(q)) ||
+    (m.effets||[]).some(e=>e.toLowerCase().includes(q))
+  );
+  hideAll();
+  const sv = document.getElementById('view-search');
+  sv.style.display = 'block';
+  if (!res.length) { sv.innerHTML = `<p style="color:var(--text2);padding:20px 0">Aucun résultat pour <strong>"${val}"</strong></p>`; return; }
+  sv.innerHTML = `<div class="sr-meta">${res.length} résultat${res.length>1?'s':''} · "${val}"</div>` +
+    res.map(m=>`<div class="sr-item" onclick="showMed('${esc(m.nom)}')">
+      <div><div class="sr-nom">${m.nom}</div><div class="sr-meta2">${m.classe} — ${(m.categories||[]).join(', ')}</div></div>
+      <span class="sr-arrow">›</span>
+    </div>`).join('');
+}
+
+// ═════ EDIT LIST (formateur)
+function renderEditList() {
+  const meds = getFilteredDB();
+  document.getElementById('edit-list').innerHTML = meds.map(m=>`
+    <div class="med-edit-row">
+      <div class="mer-left"><div class="mer-nom">${m.nom}</div><div class="mer-cls">${m.classe}</div></div>
+      <div class="mer-btns">
+        <button class="btn-edit-med" onclick="openModal('${esc(m.nom)}')">✏️ Modifier</button>
+        <button class="btn-del-med" onclick="deleteMed('${esc(m.nom)}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function deleteMed(nom) {
+  if (!confirm(`Supprimer "${nom}" ?`)) return;
+  DB = DB.filter(m => m.nom !== nom);
+  saveDB();
+  renderSidebar();
+  if (currentTab === 'edit') renderEditList();
+  else showHome();
+}
+
+// ═════ MODAL
+function openModal(nom) {
+  const m = nom ? DB.find(x=>x.nom===nom) : null;
+  document.getElementById('modal-title').textContent = m ? `Modifier : ${m.nom}` : 'Nouveau médicament';
+  document.getElementById('edit-idx').value = m ? m.nom : '';
+  document.getElementById('e-nom').value = m?.nom || '';
+  document.getElementById('e-classe').value = m?.classe || '';
+  rebuildProfilCheckboxes();
+  document.querySelectorAll('.cp').forEach(cb => cb.checked = m ? (m.profils||[]).includes(cb.value) : false);
+  document.getElementById('e-cats').value = (m?.categories||[]).join(', ');
+  document.getElementById('e-indications').value = (m?.indications||[]).join('\n');
+  document.getElementById('e-dosages').value = (m?.dosages||[]).map(d=>`${d.voie}|${d.valeur}|${d.note||''}|${d.delai||''}`).join('\n');
+  document.getElementById('e-ci').value = (m?.ci||[]).join('\n');
+  document.getElementById('e-ei').value = (m?.effets||[]).join('\n');
+  document.getElementById('e-mecanisme').value = m?.mecanisme || '';
+  document.getElementById('e-interactions').value = (m?.interactions||[]).map(i=>`${i.med}|${i.sev}`).join('\n');
+  document.getElementById('e-surdosage').value = m?.surdosage || '';
+  document.getElementById('e-alertes').value = (m?.alertes||[]).join('\n');
+  document.getElementById('modal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+function saveMed() {
+  const oldNom = document.getElementById('edit-idx').value;
+  const nom = document.getElementById('e-nom').value.trim();
+  if (!nom) { alert('Le nom est requis'); return; }
+
+  const profils = [...document.querySelectorAll('.cp:checked')].map(cb=>cb.value);
+  const parseDoses = str => str.split('\n').filter(l=>l.trim()).map(l=>{
+    const [voie,valeur,note,delai] = l.split('|').map(s=>s?.trim()||'');
+    return {voie:voie||'',valeur:valeur||'',note:note||'',delai:delai||''};
+  });
+  const parseInter = str => str.split('\n').filter(l=>l.trim()).map(l=>{
+    const [med,sev] = l.split('|').map(s=>s?.trim());
+    return {med:med||'',sev:sev||'mod'};
+  });
+  const parseLines = str => str.split('\n').map(l=>l.trim()).filter(Boolean);
+
+  const newMed = {
+    nom, classe: document.getElementById('e-classe').value.trim(),
+    profils, categories: document.getElementById('e-cats').value.split(',').map(s=>s.trim()).filter(Boolean),
+    indications: parseLines(document.getElementById('e-indications').value),
+    dosages: parseDoses(document.getElementById('e-dosages').value),
+    ci: parseLines(document.getElementById('e-ci').value),
+    effets: parseLines(document.getElementById('e-ei').value),
+    mecanisme: document.getElementById('e-mecanisme').value.trim(),
+    interactions: parseInter(document.getElementById('e-interactions').value),
+    surdosage: document.getElementById('e-surdosage').value.trim(),
+    alertes: parseLines(document.getElementById('e-alertes').value),
+  };
+
+  if (oldNom) { const idx = DB.findIndex(m=>m.nom===oldNom); if(idx>-1) DB[idx]=newMed; }
+  else DB.push(newMed);
+  saveDB();
+  closeModal();
+  renderSidebar();
+  if (currentTab === 'edit') renderEditList();
+  else showMed(nom);
+}
+</script>
+</body>
+</html>
