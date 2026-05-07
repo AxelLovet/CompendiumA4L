@@ -249,7 +249,8 @@ main{padding:24px;overflow-y:auto;}
   <div id="tabs">
     <span class="tab on" onclick="showTab('compendium',this)">📖 Compendium</span>
     <span class="tab" onclick="showTab('edit',this)">✏️ Gérer les fiches</span>
-    <span class="tab" onclick="showTab('profils',this)">👥 Gérer les profils</span>
+    <span class="tab" onclick="showTab('categories',this)">🗂 Catégories</span>
+    <span class="tab" onclick="showTab('profils',this)">👥 Profils</span>
     <span class="tab" onclick="showTab('site',this)">🎨 Apparence</span>
   </div>
 
@@ -279,7 +280,17 @@ main{padding:24px;overflow-y:auto;}
         </div>
         <div class="med-edit-list" id="edit-list"></div>
       </div>
-      <!-- PROFILS (formateur) -->
+      <!-- CATÉGORIES (formateur) -->
+      <div id="view-categories" style="display:none">
+        <div class="edit-header">
+          <div class="edit-title">🗂 Gestion des catégories</div>
+          <button class="btn-add" onclick="openCatModal(null)">＋ Nouvelle catégorie</button>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">
+          💡 Renommer une catégorie la met à jour automatiquement dans toutes les fiches. La supprimer la retire de toutes les fiches.
+        </div>
+        <div id="cat-edit-list"></div>
+      </div>
       <div id="view-profils" style="display:none">
         <div class="edit-header">
           <div class="edit-title">👥 Gestion des profils</div>
@@ -334,6 +345,27 @@ main{padding:24px;overflow-y:auto;}
   </div>
 </div>
 
+<!-- MODAL CATÉGORIE -->
+<div class="modal-overlay" id="modal-cat" style="display:none" onclick="if(event.target===this)closeCatModal()">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-head">
+      <h3 id="modal-cat-title">Nouvelle catégorie</h3>
+      <button class="modal-close" onclick="closeCatModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ec-old">
+      <div class="mf-group"><label>Nom de la catégorie</label><input type="text" id="ec-nom" placeholder="ex: Neurologie" oninput="previewCat()"></div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text3)">
+        Aperçu sidebar : <span id="ec-preview" style="font-size:11px;font-family:var(--mono);color:var(--text2)">ex: Neurologie</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeCatModal()">Annuler</button>
+      <button class="btn-save" onclick="saveCat()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PROFIL -->
 <div class="modal-overlay" id="modal-profil" style="display:none" onclick="if(event.target===this)closeProfilModal()">
   <div class="modal-box" style="max-width:440px">
@@ -373,7 +405,9 @@ main{padding:24px;overflow-y:auto;}
       <div class="mf-group"><label>Profils autorisés</label>
         <div id="profil-checkboxes" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px"></div>
       </div>
-      <div class="mf-group"><label>Catégories (virgule)</label><input type="text" id="e-cats" placeholder="ex: Antalgie, Anti-inflammatoire"></div>
+      <div class="mf-group"><label>Catégories</label>
+        <div id="cat-checkboxes" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;max-height:120px;overflow-y:auto;padding:2px"></div>
+      </div>
       <div class="mf-group"><label>Indications (une par ligne)</label><textarea id="e-indications" rows="3" placeholder="Douleur aiguë&#10;Fièvre"></textarea></div>
       <div class="mf-group"><label>Dosages adulte (voie | valeur | note | délai — une par ligne)</label>
         <textarea id="e-dosages" rows="4" placeholder="IV adulte | 1 mg/kg | Diluer dans NaCl 0.9% | Effet en 5 min&#10;PO | 1g/6h | Max 4g/j |"></textarea>
@@ -907,6 +941,118 @@ let DB = [
 ];
 
 // ═══════════════════════════════════════════════════
+// CATÉGORIES
+// ═══════════════════════════════════════════════════
+function getAllCatsFromDB() {
+  const set = new Set();
+  DB.forEach(m => (m.categories||[]).forEach(c => set.add(c)));
+  return [...set].sort();
+}
+
+function loadCats() {
+  // Les catégories sont déduites de la DB — pas de stockage séparé nécessaire
+  // Sauf si l'utilisateur a créé des catégories vides (sans médicaments)
+  const saved = localStorage.getItem('compendium_cats_extra');
+  return saved ? JSON.parse(saved) : [];
+}
+function saveExtraCats(extras) {
+  localStorage.setItem('compendium_cats_extra', JSON.stringify(extras));
+}
+function getAllCats() {
+  const fromDB = getAllCatsFromDB();
+  const extras = loadCats().filter(c => !fromDB.includes(c));
+  return [...fromDB, ...extras].sort();
+}
+
+function renderCatEditList() {
+  const cats = getAllCats();
+  const list = document.getElementById('cat-edit-list');
+  if (!cats.length) {
+    list.innerHTML = `<p style="color:var(--text2);padding:20px 0">Aucune catégorie. Crée-en une ou ajoute des médicaments.</p>`;
+    return;
+  }
+  list.innerHTML = cats.map(c => {
+    const count = DB.filter(m => (m.categories||[]).includes(c)).length;
+    return `<div class="med-edit-row">
+      <div class="mer-left">
+        <div class="mer-nom">${c}</div>
+        <div class="mer-cls">${count} médicament${count>1?'s':''}</div>
+      </div>
+      <div class="mer-btns">
+        <button class="btn-edit-med" onclick="openCatModal('${esc(c)}')">✏️ Renommer</button>
+        <button class="btn-del-med" onclick="deleteCat('${esc(c)}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openCatModal(oldNom) {
+  document.getElementById('modal-cat-title').textContent = oldNom ? `Renommer : ${oldNom}` : 'Nouvelle catégorie';
+  document.getElementById('ec-old').value = oldNom || '';
+  document.getElementById('ec-nom').value = oldNom || '';
+  previewCat();
+  document.getElementById('modal-cat').style.display = 'flex';
+  setTimeout(() => document.getElementById('ec-nom').focus(), 100);
+}
+function closeCatModal() { document.getElementById('modal-cat').style.display = 'none'; }
+function previewCat() {
+  document.getElementById('ec-preview').textContent = document.getElementById('ec-nom').value || 'Aperçu';
+}
+
+function saveCat() {
+  const oldNom = document.getElementById('ec-old').value;
+  const newNom = document.getElementById('ec-nom').value.trim();
+  if (!newNom) { alert('Le nom est requis'); return; }
+  if (oldNom && oldNom !== newNom) {
+    // Renommer dans tous les médicaments
+    DB.forEach(m => {
+      m.categories = (m.categories||[]).map(c => c === oldNom ? newNom : c);
+    });
+    saveDB();
+    // Mettre à jour extras si nécessaire
+    const extras = loadCats();
+    const ei = extras.indexOf(oldNom);
+    if (ei > -1) { extras[ei] = newNom; saveExtraCats(extras); }
+  } else if (!oldNom) {
+    // Nouvelle catégorie vide
+    const extras = loadCats();
+    if (!extras.includes(newNom) && !getAllCatsFromDB().includes(newNom)) {
+      extras.push(newNom);
+      saveExtraCats(extras);
+    }
+  }
+  closeCatModal();
+  renderCatEditList();
+  renderSidebar();
+  rebuildCatCheckboxes();
+}
+
+function deleteCat(nom) {
+  const count = DB.filter(m => (m.categories||[]).includes(nom)).length;
+  const msg = count > 0
+    ? `Supprimer la catégorie "${nom}" ?\n⚠ Elle sera retirée de ${count} fiche(s).`
+    : `Supprimer la catégorie "${nom}" ?`;
+  if (!confirm(msg)) return;
+  DB.forEach(m => { m.categories = (m.categories||[]).filter(c => c !== nom); });
+  const extras = loadCats().filter(c => c !== nom);
+  saveDB(); saveExtraCats(extras);
+  renderCatEditList();
+  renderSidebar();
+  rebuildCatCheckboxes();
+}
+
+function rebuildCatCheckboxes() {
+  const container = document.getElementById('cat-checkboxes');
+  if (!container) return;
+  const cats = getAllCats();
+  container.innerHTML = cats.map(c =>
+    `<label style="display:flex;align-items:center;gap:5px;font-size:12px;background:var(--surface2);border:1px solid var(--border);padding:4px 8px;border-radius:5px;cursor:pointer">
+      <input type="checkbox" value="${c}" class="cc"> ${c}
+    </label>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════
 // SITE CONFIG
 // ═══════════════════════════════════════════════════
 const SITE_DEFAULTS = {
@@ -988,6 +1134,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderProfilBar();
   renderHomeTips();
   rebuildProfilCheckboxes();
+  rebuildCatCheckboxes();
   renderSidebar();
   showHome();
 });
@@ -1211,6 +1358,10 @@ function showTab(tab, el) {
     hideAll();
     document.getElementById('view-edit').style.display = 'block';
     renderEditList();
+  } else if (tab === 'categories') {
+    hideAll();
+    document.getElementById('view-categories').style.display = 'block';
+    renderCatEditList();
   } else if (tab === 'profils') {
     hideAll();
     document.getElementById('view-profils').style.display = 'block';
@@ -1263,7 +1414,7 @@ function esc(s) { return s.replace(/'/g,"\\'"); }
 
 // ═════ VIEWS
 function hideAll() {
-  ['view-home','view-med','view-search','view-edit','view-profils','view-site'].forEach(id => document.getElementById(id).style.display='none');
+  ['view-home','view-med','view-search','view-edit','view-categories','view-profils','view-site'].forEach(id => document.getElementById(id).style.display='none');
 }
 function showHome() {
   hideAll();
@@ -1402,7 +1553,8 @@ function openModal(nom) {
   document.getElementById('e-classe').value = m?.classe || '';
   rebuildProfilCheckboxes();
   document.querySelectorAll('.cp').forEach(cb => cb.checked = m ? (m.profils||[]).includes(cb.value) : false);
-  document.getElementById('e-cats').value = (m?.categories||[]).join(', ');
+  rebuildCatCheckboxes();
+  document.querySelectorAll('.cc').forEach(cb => cb.checked = m ? (m.categories||[]).includes(cb.value) : false);
   document.getElementById('e-indications').value = (m?.indications||[]).join('\n');
   document.getElementById('e-dosages').value = (m?.dosages||[]).map(d=>`${d.voie}|${d.valeur}|${d.note||''}|${d.delai||''}`).join('\n');
   document.getElementById('e-ci').value = (m?.ci||[]).join('\n');
@@ -1433,7 +1585,7 @@ function saveMed() {
 
   const newMed = {
     nom, classe: document.getElementById('e-classe').value.trim(),
-    profils, categories: document.getElementById('e-cats').value.split(',').map(s=>s.trim()).filter(Boolean),
+    profils, categories: [...document.querySelectorAll('.cc:checked')].map(cb=>cb.value),
     indications: parseLines(document.getElementById('e-indications').value),
     dosages: parseDoses(document.getElementById('e-dosages').value),
     ci: parseLines(document.getElementById('e-ci').value),
