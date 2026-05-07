@@ -975,6 +975,388 @@ let DB = [
     interactions:[{med:"Alcool",sev:"haut"},{med:"Opioïdes",sev:"haut"}],
     surdosage:"Dépression respiratoire, coma. Antidote : Flumazénil.",
     alertes:["⚠ Dépendance — jamais > 4 semaines","Arrêt progressif obligatoire (syndrome de sevrage convulsivant possible)"]
+  },
+
+  // ══════════════════════════════════════════════
+  // AJOUTS CORFA / ASUR 2025 — Marco Cecconi v2.2
+  // ══════════════════════════════════════════════
+
+  {
+    nom:"Méthoxyflurane (Penthrox)",classe:"Anesthésique / Analgésique volatile — Hydrocarbure fluoré",profils:["medecin","infirmier"],
+    categories:["Antalgie","Anesthésie"],
+    indications:["Antalgie traumatique (T) — auto-administration","Douleur procédurale courte"],
+    dosages:[
+      {voie:"Inhalé",valeur:"3 mL (flacon 99%)",note:"MAX 6 mL/jour · MAX 15 mL/semaine. Expirer dans le filtre à charbon. Obturer l'orifice de la chambre pour doubler la concentration (0.2% → 0.4%)",delai:"Effet à 6–10 inhalations · pic 1–2 min · durée 30 min · demi-vie 15–20 min"}
+    ],
+    ci:["Hypersensibilité méthoxyflurane, butyl-hydroxy-toluène ou anesthésiques halogénés","Insuffisance rénale","Insuffisance hépatique","ATCD perso/familial d'accidents d'anesthésie (hyperthermie maligne)","Grossesse"],
+    effets:["Euphorie, ébriété","Vertiges","Céphalées","Somnolence","Paresthésies","Nystagmus","Odeur d'acétone, toux, nausées, vomissements","Hypotension"],
+    mecanisme:"Anesthésique halogéné volatile par inhalation. Mécanisme exact incomplet : action sur canaux ioniques (NMDA, GABA). Auto-administration = sécurité intégrée (patient lâche le masque si trop sédaté).",
+    interactions:[],
+    surdosage:"Somnolence excessive, hypotension. Arrêt inhalation suffit. Surveillance SpO2.",
+    alertes:["⚠ Ne pas donner en grossesse","Prudence si allaitement","Patient tient lui-même l'inhalateur — sécurité de base"]
+  },
+  {
+    nom:"Kétorolac (Toradol)",classe:"AINS avec effet analgésique puissant",profils:["medecin"],
+    categories:["Antalgie","AINS"],
+    indications:["Antalgie non traumatique (NT)","Colique néphrétique","Douleur en colique / spasme","Douleur continue péritonéale","Fébrifuge"],
+    dosages:[
+      {voie:"IV lente (adulte)",valeur:"30 mg IVL sur 15 sec",note:"Pic 3–5 min · durée 4–7h · demi-vie ~5h. 100% biodisponibilité PO = pas de plus-value IV vs PO",delai:"3–5 min"},
+      {voie:"IV lente (enfant > 2 ans)",valeur:"0.5–1 mg/kg IVL sur 15 sec",note:"",delai:"3–5 min"}
+    ],
+    ci:["Allergie AINS ou aspirine","Insuffisance sévère rein/foie/cœur","Ulcère gastrique actif ou < 3 mois","Ictère et ascite","Maladie inflammatoire du GI (Crohn, colite)","Association avec d'autres AINS","3ème trimestre grossesse (interdit) et accouchement (interdit)"],
+    effets:["Céphalées","Vertiges, sudation, somnolence","Douleur abdominale, nausées, dyspepsie","Bronchospasme","Hypertension"],
+    mecanisme:"Inhibiteur des COX → ↓ PGE → analgésique + fébrifuge. Diminue filtration glomérulaire, pression intra-pyélique, vascularisation muqueuse gastrique. Effet anti-agrégant.",
+    interactions:[{med:"Autres AINS",sev:"haut"},{med:"Anticoagulants",sev:"haut"},{med:"Lithium",sev:"haut"}],
+    surdosage:"Symptomatique. Pas d'antidote spécifique. Considérer Nexium 20 mg si risque ulcère.",
+    alertes:["⚠ CI absolue 3ème trimestre et accouchement","Considérer ajout Nexium 20 mg si risque ulcère peptique","Prudence si prédisposition à la rétention hydrique (insuffisance cardiaque)"]
+  },
+  {
+    nom:"Midazolam (Dormicum)",classe:"Imidazo-benzodiazépine — Myorelaxant / Anticonvulsivant / Sédatif",profils:["medecin"],
+    categories:["Anxiolyse / Sédation","Anticonvulsivant","Anesthésie"],
+    indications:["Prémédication de geste douloureux (analgésie T)","Convulsions","Induction anesthésie générale","Entretien anesthésie","Analgo-sédation vigile"],
+    dosages:[
+      {voie:"IV — Induction AG",valeur:"0.1–0.3 mg/kg IVL (1 mg en 30 sec)",note:"",delai:"2 min · pic 5–10 min · durée 10–20 min (anest.) ou 1h (séd.) · demi-vie 1–2.5h"},
+      {voie:"IV — Entretien anesthésie",valeur:"0.05–0.1 mg/kg IVL",note:"",delai:"2 min"},
+      {voie:"IV — Analgésie/sédation vigile",valeur:"1–2 mg IVL (1 mg en 30 sec) · titrable · MAX 7.5 mg",note:"Situation-dépendant",delai:"2 min"},
+      {voie:"IV / IN — Convulsions adulte",valeur:"1 mg IV · 5 mg IN/IM à répéter",note:"",delai:"< 2 min"},
+      {voie:"IN / IM — Convulsions enfant",valeur:"0.1–0.2 mg/kg IN/IM · MAX 10 mg",note:"",delai:"< 2 min"},
+      {voie:"Pacemaker / Cardioversion (sédation)",valeur:"1 mg IV",note:"Associer fentanyl charge 1 µg/kg + titration 0.5 µg/kg",delai:"2 min"}
+    ],
+    ci:["Aucune CI si convulsions","Demi-dose si > 60 ans en état critique, enfant, troubles respiratoires/rénaux/hépatiques/cardiaques"],
+    effets:["Confusion, hallucinations, réactions paradoxales","Amnésie antérograde","Ataxie, céphalées, vertiges","Hypotension","Dépression respiratoire","Nausées, constipation, sécheresse buccale","Laryngospasme"],
+    mecanisme:"Agoniste des récepteurs aux benzodiazépines sur GABA-A → inhibition SNC. Effets : myorelaxant, anticonvulsivant, sédatif/hypnotique rapide, anxiolytique, amnésiant courte durée. Non-analgésique.",
+    interactions:[{med:"Opioïdes (synergie dépression respi)",sev:"haut"},{med:"Alcool",sev:"haut"},{med:"Dépresseurs SNC",sev:"mod"}],
+    surdosage:"Dépression respiratoire, sédation excessive. ANTIDOTE : Flumazénil 0.2 mg IVL (15 sec) puis 0.1 mg aux 60 sec · MAX 1 mg.",
+    alertes:["⚠ Effet synergique avec opioïdes sur dépression respiratoire — demi-dose si association","⚠ Ne pas perfuser trop vite (dépression respiratoire)","ANTIDOTE : Flumazénil","Demi-dose si > 60 ans en état critique"]
+  },
+  {
+    nom:"Esoméprazole (Nexium)",classe:"Inhibiteur de la Pompe à Protons (IPP) — Anti-sécrétoire gastrique",profils:["medecin"],
+    categories:["Gastro-entérologie"],
+    indications:["Analgésie NT — brûlure épigastrique (RGO, gastrite, ulcère) après exclusion composante cardiaque","Hémorragie digestive haute","Prévention ulcère sous AINS"],
+    dosages:[
+      {voie:"IV — Hémorragie digestive haute",valeur:"80 mg IVB dans 100 mL NaCl 0.9%, débit rapide",note:"Effet 30 min (vidange gastrique) · durée 24h · demi-vie 1h",delai:"30 min"},
+      {voie:"PO — RGO",valeur:"20 mg/j",note:"",delai:"30 min"},
+      {voie:"PO — Prévention ulcère sous AINS",valeur:"40 mg/j",note:"",delai:"30 min"},
+      {voie:"PO/IV — Ulcère ou œsophagite",valeur:"40–80 mg/j",note:"",delai:"30 min"}
+    ],
+    ci:["Hypersensibilité esoméprazole ou benzimidazoles","Insuffisance hépatique sévère","Ne pas donner en grossesse ni allaitement"],
+    effets:["Agitation, troubles sommeil","Céphalées, vertiges, somnolence","Douleur abdominale, constipation, diarrhée, nausées","Augmentation enzymes hépatiques (transaminases)","Œdème périphérique"],
+    mecanisme:"Inhibiteur irréversible H+/K+-ATPase (pompe à H+) de la cellule pariétale gastrique → blocage sécrétion acide.",
+    interactions:[{med:"Anti-vitamine K (effets accentués)",sev:"mod"},{med:"Diazépam",sev:"mod"},{med:"Médicaments dépendants du pH gastrique (anti-HIV, azolés)",sev:"mod"}],
+    surdosage:"Symptomatique. Pas d'antidote.",
+    alertes:["⚠ Ne pas donner en grossesse ni allaitement","Prudence avec AVK, diazépam, carbamazépine (accentuation effets)"]
+  },
+  {
+    nom:"Butylscopolamine (Buscopan)",classe:"Spasmolytique anticholinergique périphérique",profils:["medecin"],
+    categories:["Antalgie","Gastro-entérologie"],
+    indications:["Antalgie NT — douleur en colique, spasme d'origine GI, biliaire ou urinaire"],
+    dosages:[
+      {voie:"IVL / IM / SC",valeur:"20–40 mg IVL (3–5 min) · 20 mg IM/SC",note:"Effet 4 min · pic 15 min · durée ~5h",delai:"4 min"}
+    ],
+    ci:["Tachycardie > 150 bpm (absolue)","Hypersensibilité (relative)","Glaucome à angle fermé non traité","Adénome prostatique + rétention urinaire","Sténoses mécaniques du tractus GI","Myasthénie grave","Ne pas donner en grossesse ni allaitement"],
+    effets:["Réaction allergique","Trouble accommodation, mydriase","Augmentation pression intra-oculaire","Tachycardie","Hypotension, vertiges","Flush","Inhibition sécrétions GI","Sécheresse buccale","Rétention urinaire"],
+    mecanisme:"Effet anticholinergique périphérique : blocage ganglionnaire viscéral + anti-muscarinique → spasmolytique des muscles lisses. Antidote : Néostigmine.",
+    interactions:[{med:"Cardiopathie existante (prudence)",sev:"mod"}],
+    surdosage:"Syndrome anticholinergique. Antidote : Néostigmine.",
+    alertes:["⚠ CI absolue si tachycardie > 150 bpm","Prudence si cardiopathie existante (tachyarythmie, hyperthyroïdie)"]
+  },
+  {
+    nom:"Clonazépam (Rivotril)",classe:"Benzodiazépine anticonvulsivante",profils:["medecin"],
+    categories:["Anticonvulsivant","Anxiolyse / Sédation"],
+    indications:["Convulsions persistantes ou récidivantes","Crise focale","Crise tonico-clonique (primaire et secondaire)","Épilepsie du nourrisson/enfant","État de mal épileptique"],
+    dosages:[
+      {voie:"IVL / IM adulte",valeur:"1 mg IVL (3–5 min) · à répéter",note:"⚠ Ne pas administrer en IN (acidité). Préparer immédiatement avant emploi. Effet immédiat · durée 3h · demi-vie 30–40h",delai:"Immédiat"},
+      {voie:"IVL / IM enfant > 3 ans",valeur:"0.01 mg/kg IVL/IM · MAX 0.5 mg",note:"",delai:"Immédiat"}
+    ],
+    ci:["Hypersensibilité aux BZD","Trouble respiratoire grave","Insuffisance hépatique grave (risque encéphalopathie)","Dépendances","Myasthénie","< 3 ans (risque hypersécrétion salivaire/bronchique)","Grossesse en absolue nécessité · ne pas allaiter"],
+    effets:["Réactions allergiques","Obnubilation, désorientation","Réactions paradoxales (excitation, agitation)","Ataxie, dysarthrie, amnésie antérograde","Troubles cardiaques et respiratoires (surtout IV, lésions cérébrales)","Thrombophlébite"],
+    mecanisme:"Agoniste des récepteurs benzodiazépines sur GABA-A → inhibition potentiels d'action SNC : freine foyer épileptogène et généralisation des convulsions.",
+    interactions:[{med:"Alcool et dépresseurs SNC",sev:"haut"},{med:"Autres BZD/opioïdes",sev:"haut"}],
+    surdosage:"Dépression respiratoire, sédation. ANTIDOTE : Flumazénil. Titrer objectif FR > 8/min.",
+    alertes:["⚠ JAMAIS en IN (acidité de la solution)","⚠ Ne pas injecter trop vite ou dans petite veine (thrombophlébite → thrombose)","ANTIDOTE : Flumazénil"]
+  },
+  {
+    nom:"Flumazénil (Anexate)",classe:"Antidote des benzodiazépines — Antagoniste compétitif GABA-A",profils:["medecin"],
+    categories:["Antidote / Overdose"],
+    indications:["Intoxication aux benzodiazépines seules avec trouble de la conscience"],
+    dosages:[
+      {voie:"IV adulte",valeur:"0.2 mg IVL (15 sec) puis 0.1 mg aux 60 sec · MAX 1 mg",note:"Effet 1–2 min · pic 6–10 min · durée 1–5h · demi-vie 1h (+ si insuf. hépatique). Titrer objectif FR > 8/min",delai:"1–2 min"},
+      {voie:"IV enfant > 1 an",valeur:"0.01 mg/kg (MAX 0.2 mg) puis 0.005–0.01 mg/kg aux 3 min · MAX 1 mg",note:"",delai:"1–2 min"}
+    ],
+    ci:["Hypersensibilité","Patient épileptique traité par BZD","Patient sous médicaments abaissant le seuil épileptogène (antidépresseurs tricycliques, amphétamines)","BZD pour contre HTIC","Sevrage alcool","Grossesse CI · allaitement OK"],
+    effets:["Obnubilation, sudation","Céphalées, troubles visuels","Nausées, vomissements","Douleur au site d'injection","Syndrome de sevrage si dépendance aux BZD"],
+    mecanisme:"Antagoniste compétitif des récepteurs GABAa sur le SNC → lève la dépression/sédation SNC induite par les BZD.",
+    interactions:[{med:"Intoxication mixte (risque convulsions, arythmies)",sev:"haut"}],
+    surdosage:"Risque re-sédation : demi-vie flumazénil (1h) < BZD → réadministrer si nécessaire.",
+    alertes:["⚠ Demi-vie COURTE — surveiller re-sédation et réadministrer","⚠ Risque convulsions si intoxication mixte (antidépresseurs tricycliques)","Titrer avec objectif FR > 8/min"]
+  },
+  {
+    nom:"Salbutamol + Ipratropium (Ipramol / Dospir)",classe:"β2-agoniste + Anticholinergique bronchodilatateur",profils:["infirmier","medecin"],
+    categories:["Asthme / Bronchospasme","Bronchodilatateurs"],
+    indications:["Détresse respiratoire avec sibilance et toux productive / ronchis","ATCD de BPCO / fumeur","Asthme bronchique","Bronchite chronique obstructive avec ou sans emphysème"],
+    dosages:[
+      {voie:"Nébulisation — Ipramol",valeur:"1 monodose 2.5 mL (0.5 mg ipratropium + 2.5 mg salbutamol)",note:"Effet 5 min (salbutamol) · 15–30 min (ipratropium) · pic 3h · durée 4–5h",delai:"5–30 min"},
+      {voie:"Nébulisation — Dospir",valeur:"1 monodose 2.5 mL (0.5 mg ipratropium + 3 mg salbutamol)",note:"",delai:"5–30 min"},
+      {voie:"Nébulisation — combiné",valeur:"0.5 mg ipratropium + 5 mg salbutamol (1 Ipramol + 2.5 mg Ventolin)",note:"",delai:"5–30 min"}
+    ],
+    ci:["Cardiomyopathie obstructive hypertrophique","Tachyarythmie","Hypersensibilité à l'atropine ou dérivés (ipratropium)","Grossesse en absolue nécessité (surtout 1er trimestre) · ne pas allaiter"],
+    effets:["Céphalées","Irritation de gorge, toux","Xérostomie","Troubles GI, nausées","Vertiges","Syndrome anticholinergique"],
+    mecanisme:"Double bronchodilatation : β2 (salbutamol) → relaxation muscle lisse bronchique + M3 (ipratropium) → blocage bronchoconstriction cholinergique. Synergie > monothérapie.",
+    interactions:[{med:"β-bloquants (antagonisme salbutamol)",sev:"haut"},{med:"Autres sympathomimétiques",sev:"mod"}],
+    surdosage:"Tachycardie, hypokaliémie. Syndrome anticholinergique. Symptomatique.",
+    alertes:["⚠ Ne pas mettre en contact avec les yeux (mydriase, glaucome à angle fermé)","En inhalation : seul 20–30% de la dose atteint les voies aériennes inférieures","Préférer à la monothérapie salbutamol si terrain BPCO/fumeur"]
+  },
+  {
+    nom:"Méthylprednisolone (Solu-Medrol)",classe:"Glucocorticoïde — Anti-inflammatoire stéroïdien",profils:["medecin"],
+    categories:["Asthme / Bronchospasme","Choc anaphylactique","Anti-inflammatoire"],
+    indications:["Trouble respiratoire avec asthme aigu","Réaction anaphylactique","Affections dermatologiques et maladies allergiques"],
+    dosages:[
+      {voie:"IVL adulte",valeur:"125 mg IVL (≥ 5 min)",note:"Effet antalgique > 30 min · effet anti-inflammatoire 2–3h · pic 1–2h · durée 4–6h",delai:"30 min (antalgique) · 2–3h (anti-inflam.)"},
+      {voie:"IVL enfant",valeur:"0.5–2 mg/kg IVL",note:"",delai:"30 min"}
+    ],
+    ci:["Hypersensibilité","Mycoses systémiques"],
+    effets:["Rétention hydrosodée, hypokaliémie, œdème périphérique","Troubles affectifs (humeur dépressive ou euphorique)","Faiblesse musculaire, insomnie","Hypertension","Syndrome de Cushing (long terme)","Ostéoporose","Ulcère peptique","Hyperglycémie (!)"],
+    mecanisme:"Effet promoteur génique : inhibiteur de la phospholipase A2 (inhibiteur indirect COX2) → puissant anti-inflammatoire. Masque signes d'infection.",
+    interactions:[{med:"Hypoglycémiants (hyperglycémie)",sev:"mod"},{med:"AINS (ulcère)",sev:"mod"}],
+    surdosage:"Ne pas perfuser en < 10 min et à forte dose ≥ 500 mg (risque arythmie et collapsus cardiovasculaire).",
+    alertes:["⚠ Ne pas perfuser en < 10 min à forte dose (arythmie, collapsus)","⚠ Surveiller glycémie (hyperglycémie)","Masque les signes d'infection — vigilance","Bronchospasme possible en parentéral"]
+  },
+  {
+    nom:"Ocytocine (Syntocinon)",classe:"Hormone post-hypophysaire — Renforçateur des contractions utérines",profils:["medecin"],
+    categories:["Obstétrique"],
+    indications:["Post-partum : prévention et traitement atonie utérine et hémorragie post-partum","Ante-partum : induction accouchement (HTA gravidique, avortement)"],
+    dosages:[
+      {voie:"IVL (5 min) / IM",valeur:"5 UI diluées dans 100 mL NaCl 0.9%",note:"À répéter 1× si hémorragie post-partum primaire avec atonie malgré massage utérin continu. Effet 1 min IV · 2–4 min IM · demi-vie 3–20 min",delai:"1–4 min"}
+    ],
+    ci:["Hypersensibilité ocytocine","Grossesses gémellaires/multiples (bébés non encore nés)","Contractions utérines hypertoniques / stress fœtal (délivrance non imminente)","Pré-éclampsie grave","Prédisposition embolie amniotique (mort fœtale in utero, placenta abruptio)","Disproportion fœto-pelvienne, présentation anormale, placenta prævia, vasa prævia, décollement placenta, procidence cordon"],
+    effets:["Troubles cardiovasculaires graves si IV bolus ou surdosage","HypoTA brève","Flush/érythème","Tachycardie réflexe","Allongement QT","Nausées, vomissements","Céphalées"],
+    mecanisme:"Hormone post-hypophysaire contractant les muscles lisses utérins (augmente tonus et fréquence des contractions) et des alvéoles mammaires (facilite écoulement du lait).",
+    interactions:[{med:"Médicaments prolongeant QT",sev:"mod"}],
+    surdosage:"Contractions utérines excessives, stress fœtal, hypotension. Arrêter la perfusion.",
+    alertes:["⚠ Ne jamais donner en bolus IV (risque cardiovasculaire grave)","⚠ Prudence si syndrome QT long ou médicaments prolongeant QT","CI si d'autres bébés doivent encore naître"]
+  },
+  {
+    nom:"Labétalol (Trandate)",classe:"α- et β-bloquant",profils:["medecin"],
+    categories:["Hypertension","Cardiologie","Obstétrique"],
+    indications:["Douleurs thoraciques évocatrices de dissection aortique + HTA","Déficit neuro focal + HTA > 220/120 mmHg (AVC)","HTA en pré-éclampsie sévère","Éclampsie"],
+    dosages:[
+      {voie:"IVL — Dissection aortique",valeur:"5–10 mg IVL (> 60–120 sec) · répéter aux 5–10 min · MAX 100 mg",note:"Objectif TAS < 120 mmHg (dissection). Effet 2–5 min · durée 4h · demi-vie 4h",delai:"2–5 min"},
+      {voie:"IVL — AVC",valeur:"5–10 mg IVL · répéter aux 5–10 min",note:"Objectif TAS < 180 mmHg",delai:"2–5 min"},
+      {voie:"PO — Pré-éclampsie sévère",valeur:"200 mg PO si HTA > 160/110 mmHg · 100 mg PO si HTA > 140/90 après 20 sem.",note:"",delai:"20–30 min"},
+      {voie:"PSE — Éclampsie",valeur:"20 mg/h · titrer jusqu'à objectif TA",note:"",delai:"Variable"}
+    ],
+    ci:["BAV II et III","Choc cardiogénique ou hypoTA persistante ou bradycardie sévère","ATCD asthme","ATCD BPCO"],
+    effets:["Nausées, vomissements","Douleurs épigastriques","Bradycardie et/ou hypoTA orthostatique","Bronchospasme"],
+    mecanisme:"α-blocage → vasodilatation + β-blocage → prévient sympathicotonie réflexe. Hypotenseur sans stimulation cardiaque réflexe. Antidote bradycardie : atropine 0.5–3 mg IV ou glucagon. Antidote bronchospasme : β2-adrénergique.",
+    interactions:[{med:"Autres hypotenseurs",sev:"mod"},{med:"Anesthésiques halogénés",sev:"mod"}],
+    surdosage:"Bradycardie, hypotension sévère. Antidote surdosage massif : glucagon IV bolus 5–10 mg dans G5%, suivi 5 mg/h PSE. Éviter extravasation (corrosif).",
+    alertes:["⚠ Risque de masquer réactions compensatoires (tachycardie, vasoconstriction) d'une hémorragie","⚠ Éviter extravasation (corrosif)","CI absolue ATCD asthme/BPCO"]
+  },
+  {
+    nom:"Sulfate de Magnésium (MgSO4)",classe:"Anti-arythmique / Anticonvulsivant — Antagoniste Ca²+",profils:["medecin"],
+    categories:["Arrêt cardiaque","Asthme / Bronchospasme","Obstétrique","Arythmie"],
+    indications:["ACR et torsades de pointe","Asthme aigu ne s'améliorant pas","Pré-éclampsie sévère et éclampsie"],
+    dosages:[
+      {voie:"IV/IO — ACR et torsades de pointe",valeur:"2 g IVL/IO (5 min)",note:"Effet quelques min · durée 0.5–4h · demi-vie 60h",delai:"Quelques min"},
+      {voie:"IV — Asthme aigu",valeur:"2 g dans 100 mL NaCl 0.9% IVL (15–20 min)",note:"",delai:"15–20 min"},
+      {voie:"IV/IO — Pré-éclampsie sévère",valeur:"4 g dans 100 mL NaCl 0.9% IVL lent (> 15 min)",note:"",delai:"15 min"},
+      {voie:"IV/IO — Éclampsie",valeur:"4 g dans 100 mL NaCl 0.9% IVL lent (> 5 min) · Si récidive : 2 g · MAX 6 g total",note:"",delai:"5 min"}
+    ],
+    ci:["BAV","Myasthénie grave","Prise simultanée barbiturique/narcotique/hypnotique (dépression resp.)"],
+    effets:["Bradycardie","Anomalie de conduction","Sensation de chaleur","Hypotension"],
+    mecanisme:"Cation antagoniste du Ca²+ : stabilisateur de membrane (Na-K-ATPase), allonge temps de conduction et d'excitabilité cardiaque. Bronchodilatation par antagonisation Ca²+. Vasodilatation périphérique (↓ TA). Antidote surdosage : 1 g gluconate de Ca²+ IVL.",
+    interactions:[{med:"Dépresseurs respiratoires (synergie)",sev:"haut"}],
+    surdosage:"Dépression respiratoire, hypotension, bradycardie. ANTIDOTE : 1 g gluconate de calcium IVL.",
+    alertes:["⚠ Ne pas injecter trop vite (hypotension, céphalées, flush, nausées)","⚠ Antidote : gluconate de calcium 1 g IVL","Prudence si insuffisance rénale grave (accumulation Mg²+)","Éviter extravasation (corrosif)"]
+  },
+  {
+    nom:"Clopidogrel (Plavix)",classe:"Inhibiteur de l'agrégation plaquettaire — Anti-ADP",profils:["medecin"],
+    categories:["Antiagrégant plaquettaire","Cardiologie"],
+    indications:["SCA — avec allergie AAS ou associé à AAS avec SCA et (N)STEMI","Prévention AVC : 75 mg/j","Prévention événements athérothrombotiques des maladies vasculaires périphériques"],
+    dosages:[
+      {voie:"PO",valeur:"300 mg dose unique",note:"75 mg PO si SCA-STEMI chez le > 75 ans. Effet 2h · pic 6h · durée 7–10j (renouvellement plaquettaire)",delai:"2h · pic 6h"}
+    ],
+    ci:["Hypersensibilité aux thiénopyridines","Lésions organiques susceptibles de saigner (ulcère, AVC aigu)","Insuffisance hépatique sévère","Grossesse en absolue nécessité · ne pas allaiter"],
+    effets:["Troubles hémorragiques","Neutropénie","Thrombopénie"],
+    mecanisme:"Prodrogue (foie) inhibiteur sélectif de fixation ADP à son récepteur plaquettaire → inactivation irréversible du complexe GP IIb/IIIa → la plaquette ne se lie pas au fibrinogène. Antidote : transfusion plaquettaire.",
+    interactions:[{med:"Anticoagulants oraux",sev:"haut"},{med:"AINS",sev:"mod"},{med:"IPP (réduction efficacité via CYP2C19)",sev:"mod"}],
+    surdosage:"Hémorragie. Antidote : transfusion plaquettaire.",
+    alertes:["⚠ Prudence si risque hémorragique","Antidote hémorragie : transfusion plaquettaire"]
+  },
+  {
+    nom:"Prasugrel (Efient)",classe:"Inhibiteur de l'agrégation plaquettaire — Anti-ADP puissant",profils:["medecin"],
+    categories:["Antiagrégant plaquettaire","Cardiologie"],
+    indications:["SCA avec allergie AAS","SCA en association avec AAS — prévention athérothrombotique avant ICP (intervention coronarienne percutanée)"],
+    dosages:[
+      {voie:"PO",valeur:"60 mg dose unique",note:"Effet 15 min · pic 30 min",delai:"15 min"}
+    ],
+    ci:["Saignements aigus","Hypersensibilité","ATCD d'AVC ou AIT","Insuffisance hépatique grave (classe C de Child-Pugh)"],
+    effets:["Hémorragie (1.3% fatales), souvent tractus GI","Anémie"],
+    mecanisme:"Prodrogue inhibiteur sélectif fixation ADP sur récepteur plaquettaire. Plus puissant et à action plus rapide que clopidogrel. Antidote : transfusion plaquettaire.",
+    interactions:[{med:"Anticoagulants, AINS, fibrinolytiques",sev:"haut"}],
+    surdosage:"Hémorragie. Antidote : transfusion plaquettaire.",
+    alertes:["⚠ Hémorragies mortelles chez > 75 ans ou < 60 kg — bénéfice/risque à évaluer","⚠ CI absolue si ATCD AVC/AIT","Antidote : transfusion plaquettaire"]
+  },
+  {
+    nom:"Dropéridol",classe:"Neuroleptique butyrophénone — Antiémétique",profils:["medecin"],
+    categories:["Antiémétique"],
+    indications:["Nausées et vomissements post-opératoires (NVPO)"],
+    dosages:[
+      {voie:"IVL adulte",valeur:"0.5–1 mg IVL (3–5 min)",note:"Monitoring ECG 12D avant et 2–3h après. Effet 3–10 min · pic 30 min · demi-vie 1.5–2h",delai:"3–10 min"}
+    ],
+    ci:["Hypersensibilité aux DeHydroBezoPeridols","QTc long (< 440 msec homme / < 450 msec femme)","FC < 50–60 bpm","TA < 90 mmHg","Grossesse ou allaitement","Association avec antiarythmiques Ia/III, neuroleptiques, certains antibiotiques, bradycardisants, antihypertenseurs, dépresseurs SNC (liste longue — vérifier)"],
+    effets:["Sédation, dyskinésies","Agitation","Hypotension","Arythmie","Syndrome malin des neuroleptiques : rigidité, hyperthermie, tachycardie, hyperTA, ↓GCS, diaphorèse, sialorrhée","Effets anticholinergiques : constipation, xérostomie, vision floue, rétention urinaire"],
+    mecanisme:"Butyrophénone à action brève : antagoniste D2 + agoniste α2 + antagoniste 5-HT3, H1, muscarinique, nicotinique → effet antiémétique via GABA-A.",
+    interactions:[{med:"Amiodarone + autres allongeurs QT",sev:"haut"},{med:"Bradycardisants (diltiazem, bêtabloquants)",sev:"haut"},{med:"Méthadone",sev:"haut"}],
+    surdosage:"Allongement QT, hypotension, syndrome malin neuroleptiques. Traitement symptomatique.",
+    alertes:["⚠ ECG 12D OBLIGATOIRE avant et 2–3h après","⚠ Interactions médicamenteuses très nombreuses — vérifier systématiquement","Se tenir prêt à traiter une hypotension"]
+  },
+  {
+    nom:"Propofol",classe:"Inducteur hypnotique — Action rapide et durée courte",profils:["medecin"],
+    categories:["Anesthésie","Anxiolyse / Sédation"],
+    indications:["Induction anesthésie générale","Sédation de courte durée","État de mal épileptique","Toxidrome hypnosédatif"],
+    dosages:[
+      {voie:"IV — Induction AG",valeur:"1–3 mg/kg IV",note:"Préoxygéner (risque apnée transitoire). Effet 30 sec · durée 5–10 min",delai:"30 sec"},
+      {voie:"IV — Entretien (PSE)",valeur:"4–10 mg/kg/h PSE",note:"",delai:"Continu"}
+    ],
+    ci:["Hypersensibilité propofol, excipients (soja, œufs)","État de choc","Hypotension","Bradycardie","Grossesse · allaitement (?)"],
+    effets:["Dépression respiratoire (apnée)","Hypotension","Diminution FC","Thrombose, phlébite"],
+    mecanisme:"Agoniste des récepteurs anesthésiques sur GABA-A (canal Cl-) → hyperpolarisation membranaire → inhibition PA → dépresseur SNC. Effets : sédatif/hypnotique, inotropie négative (↓FC), vasodilatation périphérique (↓TA), ↓DSC et PIC.",
+    interactions:[{med:"Opioïdes (synergie dépression respi)",sev:"haut"},{med:"BZD",sev:"haut"}],
+    surdosage:"Apnée, hypotension, bradycardie. Traitement symptomatique. Ventilation assistée.",
+    alertes:["⚠ Préoxygéner obligatoirement avant induction","⚠ Risque apnée transitoire — matériel de ventilation prêt","Allergie soja/œufs : vérifier avant"]
+  },
+  {
+    nom:"Étomidate (Hypnomidate)",classe:"Inducteur hypnotique — Action rapide, durée courte, stabilité hémodynamique",profils:["medecin"],
+    categories:["Anesthésie"],
+    indications:["Induction anesthésie générale — inducteur de choix si instabilité hémodynamique"],
+    dosages:[
+      {voie:"IV bolus",valeur:"20 mg IVD bolus (0.2–0.3 mg/kg)",note:"Pas d'effet analgésique → prémédiquer avec fentanyl. Effet 5–15 sec · disparition effet central 5–9 min · demi-vie 1–5 min",delai:"5–15 sec"},
+      {voie:"IV — TCC / Épilepsie (enfant)",valeur:"0.3–0.4 mg/kg",note:"",delai:"5–15 sec"}
+    ],
+    ci:["Hypersensibilité étomidate ou émulsions lipidiques","Nourrissons < 6 mois"],
+    effets:["Myoclonies","Anaphylaxies","Hypotension passagère"],
+    mecanisme:"Agoniste des récepteurs barbituriques sur GABAa-R (canal Cl-) → hyperpolarisation membranaire → dépression SNC. Effets : sédatif/hypnotique bref, dépression respiratoire minime, réduction PIC et pression intra-oculaire. Minimal retentissement hémodynamique.",
+    interactions:[{med:"Anesthésiques inhalés (risque apnée longue)",sev:"mod"}],
+    surdosage:"Apnée prolongée si associé à anesthésiques inhalés. Traitement symptomatique.",
+    alertes:["⚠ Aucun effet analgésique — prémédiquer avec fentanyl obligatoirement","Inducteur de choix si instabilité hémodynamique (↓TA minimale)"]
+  },
+  {
+    nom:"Rocuronium (Esmeron)",classe:"Curare non-dépolarisant — Action rapide, durée intermédiaire",profils:["medecin"],
+    categories:["Anesthésie"],
+    indications:["Intubation (ISR — séquence rapide d'intubation)","Maintien de la relaxation musculaire en anesthésie"],
+    dosages:[
+      {voie:"IV — ISR",valeur:"1–1.2 mg/kg",note:"Effet 1–2 min · durée ~20 min",delai:"1–2 min"},
+      {voie:"IV — Entretien curarisation",valeur:"0.3 mg/kg",note:"Durée d'action augmentée si âgé avec IR ou IH",delai:"Variable"}
+    ],
+    ci:["Hypersensibilité rocuronium ou bromure"],
+    effets:["Anaphylaxie","Tachycardie","Hypotension, choc"],
+    mecanisme:"Inhibiteur compétitif de l'acétylcholine au récepteur nicotinique de la plaque motrice → myorelaxation. Antidote : Sugammadex (spécifique, rapide) ou néostigmine.",
+    interactions:[{med:"Anesthésiques inhalés (potentialisation)",sev:"mod"}],
+    surdosage:"Bloc neuromusculaire prolongé. ANTIDOTE : Sugammadex 16 mg/kg IV (reversal immédiat). Néostigmine si indisponible.",
+    alertes:["⚠ ANTIDOTE : Sugammadex disponible obligatoirement","Durée d'action augmentée si insuffisance rénale/hépatique ou sujet âgé"]
+  },
+  {
+    nom:"Suxaméthonium / Succinylcholine (Succinolin)",classe:"Curare dépolarisant — Action très rapide, durée très courte",profils:["medecin"],
+    categories:["Anesthésie"],
+    indications:["Intubation (ISR — séquence rapide d'intubation)","Myorelaxation rapide"],
+    dosages:[
+      {voie:"IV",valeur:"100 mg IV (1–1.5 mg/kg)",note:"Effet 30 sec · durée ~2 min · disparition effet 8–10 min",delai:"30 sec"}
+    ],
+    ci:["Hypersensibilité","Grands brûlés (hyperK+ après 10–66j post-brûlure → risque ACR)","Insuffisance hépatique sévère"],
+    effets:["Hyperkaliémie aiguë (100% des cas — arythmies sévères voire ACR si conditions défavorables)","Fasciculations musculaires","Douleurs musculaires","Bradycardie légère (50% enfants)","Myoglobinémie (20% enfants)","Augmentation pression intra-oculaire et intra-gastrique","Hyperthermie maligne","Anaphylaxie","Rhabdomyolyse","Paralysie prolongée","Myoglobinurie"],
+    mecanisme:"Dérivé de la choline stimulant les récepteurs muscariniques : dépolarisation membranaire musculaire → fasciculations initiales → paralysie progressive des muscles striés (palpébraux, masticateurs, glottiques, intercostaux, diaphragme). Métabolisation rapide par pseudocholinestérases plasmatiques.",
+    interactions:[{med:"Agents anti-cholinestérasiques (prolongent bloc)",sev:"haut"}],
+    surdosage:"Bloc prolongé si déficit pseudocholinestérases. Traitement symptomatique (ventilation assistée).",
+    alertes:["⚠ CI absolue chez grands brûlés (hyperkaliémie létale)","⚠ Hyperkaliémie dans 100% des cas — vérifier conditions","Durée très courte (~2 min) — avantage si intubation difficile prévisible"]
+  },
+  {
+    nom:"Furosémide (Lasix)",classe:"Diurétique de l'anse ascendante de Henlé",profils:["medecin"],
+    categories:["Cardiologie","Diurétiques"],
+    indications:["OAP si TAS > 90 mmHg avec signes d'hypervolémie"],
+    dosages:[
+      {voie:"IV dose unique",valeur:"20 mg IV",note:"Ne pas perfuser trop vite (< 5 min). Effet 5 min · durée 2h",delai:"5 min"}
+    ],
+    ci:["TA < 90 mmHg","Coma hépatique","HypoK+ sévère","HypoNa+ sévère","Déshydratation","Hypersensibilité aux sulfamides","Grossesse en absolue nécessité · ne pas allaiter"],
+    effets:["Trouble de l'excitation cardiaque","Troubles circulatoires orthostatiques","Hypotonie","Trouble conscience","Polyurie, polydipsie","Acouphènes (tinnitus)","HypoK+ et hypovolémie","Néphrolithiase du prématuré","HyperT° (fièvre)"],
+    mecanisme:"Inhibiteur pompe Na+K+/2Cl- → augmente diurèse → diminue volume sanguin → ↓ précharge, ↓ pression veineuse, ↓ œdème, ↓ HTA.",
+    interactions:[{med:"Digitalique (hypokaliémie potentialise toxicité)",sev:"haut"},{med:"Aminosides (ototoxicité)",sev:"haut"},{med:"Lithium",sev:"haut"}],
+    surdosage:"Déshydratation sévère, hypokaliémie (arythmies). Réhydratation IV, supplémentation K+.",
+    alertes:["⚠ CI si TAS < 90 mmHg","Effet diminué si hypoprotéinémie ou hypoperfusion rénale"]
+  },
+  {
+    nom:"Glucose (Perf Glc 20% / Amp Glc 40%)",classe:"Agent hyperglycémiant",profils:["medecin"],
+    categories:["Hypoglycémie"],
+    indications:["Hypoglycémie sévère (HGT < 4 mmol/L)","Triade de Whipple : hypoHGT + signes adrénergiques + signes neuroglucopéniques"],
+    dosages:[
+      {voie:"IV adulte",valeur:"16–20 g IVL (1–2 min)",note:"Perfusion dans veine de gros calibre. Éviter extravasation (corrosif). Rapide",delai:"Rapide"},
+      {voie:"IV enfant",valeur:"0.4 g/kg PO/IV/IO · G20% : 2 mL/kg IV",note:"",delai:"Rapide"}
+    ],
+    ci:["Hyperglycémie (absolue)","Hypokaliémie non traitée","Hyperhydratation","Déshydratation hypotonique"],
+    effets:["Hypervolémie","HypoK+","HypoMg2+","Hypophosphate","Hyperglycémie"],
+    mecanisme:"Apport direct de glucose → correction immédiate de l'hypoglycémie.",
+    interactions:[],
+    surdosage:"Hyperglycémie, hypokaliémie. Insuline rapide si nécessaire.",
+    alertes:["⚠ Perfusion dans GROSSE VEINE — extravasation = nécrose (corrosif)","⚠ Prudence si TCC, AVC ou œdème cérébral (risque HTIC)","Associer thiamine AVANT le glucose si contexte alcoolisme/malnutrition"]
+  },
+  {
+    nom:"Thiamine (Benerva)",classe:"Vitamine B1 — Cofacteur métabolisme glucides",profils:["medecin"],
+    categories:["Vitamines / Suppléments","Hypoglycémie"],
+    indications:["Hypoglycémie sévère chez patient comateux avec contexte de malnutrition ou alcoolisme chronique","Hypoglycémie ne réagissant pas au glucose","Béribéri (avitaminose B1)","Encéphalopathie de Wernicke","Myocardiopathie alcoolique"],
+    dosages:[
+      {voie:"IV",valeur:"100 mg IV",note:"Administrer AVANT le glucose en contexte alcoolisme/malnutrition",delai:"Rapide"}
+    ],
+    ci:["Hypersensibilité"],
+    effets:["Réaction au point d'injection","Anaphylaxie (rare)"],
+    mecanisme:"Forme active (pyrophosphate de thiamine) : cofacteur aux enzymes clés du métabolisme des glucides. Stockage hépatique (durée ~2 semaines).",
+    interactions:[{med:"Antiacides (inhibent absorption Vit B1)",sev:"mod"}],
+    surdosage:"Rare. Anaphylaxie possible en IV rapide.",
+    alertes:["⚠ Administrer AVANT le glucose si alcoolisme/malnutrition (risque déplétion totale réserves thiamine)","Autres causes de carence : chirurgies GI, dialyse, rénopathies"]
+  },
+  {
+    nom:"Diméthindène (Feniallerg)",classe:"Antihistaminique H1 — Stabilisateur mastocytes",profils:["medecin","pharmacien"],
+    categories:["Antihistaminique","Choc anaphylactique"],
+    indications:["Réaction anaphylactique","Urticaires et angio-œdèmes","Prurit, éruption, piqûres","Allergies VAS / alimentaires / médicamenteuses"],
+    dosages:[
+      {voie:"PO adulte",valeur:"3–6 mg PO (60–120 gouttes) 3×/j",note:"1 mL (20 gouttes) = 1 mg. 1 goutte = 0.05 mg. Effet 30 min · pic 5h · demi-vie 6h",delai:"30 min"},
+      {voie:"PO enfant 1 mois–12 ans",valeur:"0.1 mg/kg/j = 2 gouttes/kg/j répartis en 3×/j",note:"Dès 12 ans : dose adulte",delai:"30 min"}
+    ],
+    ci:["Nouveau-nés < 1 mois (surtout prématurés)"],
+    effets:["Somnolence","Diminution réactions (véhicules, machines)"],
+    mecanisme:"Inhibiteur compétitif des récepteurs H1 + stabilisateur puissant mastocytes. Effets antagonistes bradykinine, sérotonine, acétylcholine. En association avec anti-H2 : suppression effets circulatoires de l'histamine.",
+    interactions:[{med:"Alcool, sédatifs, hypnotiques, IMAO",sev:"mod"},{med:"Atropine, antidépresseurs tricycliques (anticholinergique)",sev:"mod"}],
+    surdosage:"Somnolence excessive, effets anticholinergiques (surtout enfants 1 mois–1 an). Symptomatique.",
+    alertes:["Ne pas donner sous forme parentérale aux enfants < 1 an","Prudence enfants 1 mois–1 an (dépression SNC, apnée, effets antimuscariniques)","Grossesse OK · ne pas allaiter"]
+  },
+  {
+    nom:"Clémastine (Tavegyl)",classe:"Antihistaminique H1 avec effet anticholinergique",profils:["medecin"],
+    categories:["Antihistaminique","Choc anaphylactique"],
+    indications:["Réaction anaphylactique","Vasoconstriction, diminution perméabilité capillaire, ↓œdème, ↓prurit","(Bronchodilatation légère)"],
+    dosages:[
+      {voie:"IVL / PO adulte",valeur:"2 mg IVL (2–5 min) / PO dose unique",note:"Effet ~15 min · durée 12h · demi-vie 4–37h",delai:"15 min"},
+      {voie:"IV enfant > 1 an",valeur:"0.02–0.06 mg/kg IV",note:"",delai:"15 min"},
+      {voie:"PO enfant > 6 ans",valeur:"0.5–1 mg PO",note:"",delai:"30 min"}
+    ],
+    ci:["Hypersensibilité clémastine ou autres anti-H","En IV : < 1 an","En PO : < 6 ans","Grossesse CI · allaitement CI"],
+    effets:["Sédation, fatigue","Vertiges, maux de tête","Agitation","Gastralgie, nausées","Sécheresse buccale","Constipation","Syndrome anticholinergique"],
+    mecanisme:"Antagoniste des récepteurs H1 de l'histamine avec effet anticholinergique → vasoconstriction, ↓ perméabilité capillaire, ↓ œdème, ↓ prurit.",
+    interactions:[{med:"Sédatifs, hypnotiques, IMAO, alcool",sev:"mod"},{med:"Atropine, antidépresseurs tricycliques",sev:"mod"}],
+    surdosage:"Sédation excessive, syndrome anticholinergique. Traitement symptomatique.",
+    alertes:["⚠ Ne pas donner en IV aux < 1 an","⚠ Ne pas donner en grossesse ni allaitement"]
+  },
+  {
+    nom:"Éphédrine",classe:"Sympathicomimétique non catécholamine — Vasoconstricteur",profils:["medecin"],
+    categories:["Choc / Hypotension","Cardiologie"],
+    indications:["Hypotension artérielle résistant au traitement de l'hypovolémie et de l'insuffisance cardiaque","HypoTA post-anesthésie rachidienne pendant accouchement"],
+    dosages:[
+      {voie:"IV",valeur:"5–10 mg IV · répéter aux 5–10 min jusqu'à TA cible",note:"Effets quelques min · durée 1h",delai:"Quelques min"}
+    ],
+    ci:["Hypovolémie non traitée (sauf urgence absolue)","Hypersensibilité aux sympathomimétiques","Hyperthyroïdie / thyréotoxicose","Glaucome à angle étroit","Cardiopathies sévères (insuffisance coronaire, angine, arythmies, artériosclérose, HTA)"],
+    effets:["Palpitations, tachycardie","Agitation, excitation, anxiété, euphorie","Hallucinations","Nausées, vomissements","Tachyphylaxie (rapidement)"],
+    mecanisme:"Triple mécanisme : effet direct sur R-α/β + libération vésicules pré-synaptiques de noradrénaline + inhibition recapture NA + inhibition MAO. → ↑TA par vasoconstriction artério-veineuse + ↑ débit cardiaque. Maintien pression de perfusion cérébrale, coronaire et utérine.",
+    interactions:[{med:"Atropine (risque tachycardie)",sev:"mod"},{med:"Digitaliques (arythmies)",sev:"haut"},{med:"IMAO (risque HTA)",sev:"haut"},{med:"β-bloquants (antagonisme)",sev:"mod"}],
+    surdosage:"Hypertension sévère, arythmies. Phentolamine si nécessaire. Surveillance ECG.",
+    alertes:["⚠ Monitorer et corriger hypoxie, hypercapnie et acidose (réduction efficacité)","⚠ Tachyphylaxie rapide — ne pas répéter indéfiniment","Dose faible (< 0.5 mg/kg) : effets cardiaques · Dose élevée (2–5 mg/kg) : suppression réflexe"]
   }
 ];
 
