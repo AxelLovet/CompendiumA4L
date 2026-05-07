@@ -152,7 +152,7 @@ main{padding:24px;overflow-y:auto;}
 .surdosage-box strong{color:#f87171;}
 
 /* ── MODE FORMATEUR ── */
-#view-edit{display:none;}
+#view-edit,#view-categories,#view-profils,#view-site{display:none;}
 .edit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
 .edit-title{font-size:18px;font-weight:600;}
 .btn-add{background:var(--green);border:none;color:white;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;}
@@ -295,7 +295,7 @@ main{padding:24px;overflow-y:auto;}
       <!-- SEARCH -->
       <div id="view-search"></div>
       <!-- EDIT (formateur) -->
-      <div id="view-edit">
+      <div id="view-edit" style="display:none">
         <div class="edit-header">
           <div class="edit-title">✏️ Gestion des fiches</div>
           <button class="btn-add" onclick="openModal(null)">＋ Nouveau médicament</button>
@@ -1326,6 +1326,11 @@ let currentTab = 'compendium';
 
 // ═════ DÉMARRAGE DIRECT
 window.addEventListener('DOMContentLoaded', () => {
+  // Cacher toutes les vues formateur immédiatement
+  ['view-edit','view-categories','view-profils','view-site'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
   loadDB();
   loadProfils();
   loadSiteConfig();
