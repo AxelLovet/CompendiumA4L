@@ -4,6 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compendium SSSM — Arma3</title>
+<script type="module">
+// ═══════════════════════════════════════════════════
+// FIREBASE — Synchronisation temps réel
+// ═══════════════════════════════════════════════════
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAT36UZo_2Dqe6nWzf_tAXHkxKKZi7kbEU",
+  authDomain: "comprendiuma4l.firebaseapp.com",
+  projectId: "comprendiuma4l",
+  storageBucket: "comprendiuma4l.firebasestorage.app",
+  messagingSenderId: "499800962237",
+  appId: "1:499800962237:web:35d651c2d09fb6b319f3d4"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db_fs = getFirestore(fbApp);
+
+// ─── Helpers Firestore ───────────────────────────
+async function fsGet(docId) {
+  try {
+    const snap = await getDoc(doc(db_fs, 'compendium', docId));
+    return snap.exists() ? snap.data().value : null;
+  } catch(e) { console.warn('fsGet error', e); return null; }
+}
+async function fsSet(docId, value) {
+  try {
+    await setDoc(doc(db_fs, 'compendium', docId), { value });
+  } catch(e) { console.warn('fsSet error', e); }
+}
+
+// ─── Listeners temps réel ────────────────────────
+function fsListen(docId, callback) {
+  onSnapshot(doc(db_fs, 'compendium', docId), snap => {
+    if (snap.exists()) callback(snap.data().value);
+  });
+}
+
+// ─── Exposer globalement ─────────────────────────
+window._fsGet = fsGet;
+window._fsSet = fsSet;
+window._fsListen = fsListen;
+window._firebaseReady = true;
+window.dispatchEvent(new Event('firebaseReady'));
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1419,35 +1465,33 @@ function previewCat() {
   document.getElementById('ec-preview').textContent = document.getElementById('ec-nom').value || 'Aperçu';
 }
 
-function saveCat() {
+async function saveCat() {
   const oldNom = document.getElementById('ec-old').value;
   const newNom = document.getElementById('ec-nom').value.trim();
   if (!newNom) { alert('Le nom est requis'); return; }
   if (oldNom && oldNom !== newNom) {
-    // Renommer dans tous les médicaments
     DB.forEach(m => {
       m.categories = (m.categories||[]).map(c => c === oldNom ? newNom : c);
     });
-    saveDB();
-    // Mettre à jour extras si nécessaire
+    await saveDB();
     const extras = loadCats();
     const ei = extras.indexOf(oldNom);
-    if (ei > -1) { extras[ei] = newNom; saveExtraCats(extras); }
+    if (ei > -1) { extras[ei] = newNom; await saveExtraCats(extras); }
   } else if (!oldNom) {
-    // Nouvelle catégorie vide
     const extras = loadCats();
     if (!extras.includes(newNom) && !getAllCatsFromDB().includes(newNom)) {
       extras.push(newNom);
-      saveExtraCats(extras);
+      await saveExtraCats(extras);
     }
   }
   closeCatModal();
   renderCatEditList();
   renderSidebar();
   rebuildCatCheckboxes();
+  showSyncStatus('✓ Catégorie sauvegardée', 'green');
 }
 
-function deleteCat(nom) {
+async function deleteCat(nom) {
   const count = DB.filter(m => (m.categories||[]).includes(nom)).length;
   const msg = count > 0
     ? `Supprimer la catégorie "${nom}" ?\n⚠ Elle sera retirée de ${count} fiche(s).`
@@ -1455,10 +1499,11 @@ function deleteCat(nom) {
   if (!confirm(msg)) return;
   DB.forEach(m => { m.categories = (m.categories||[]).filter(c => c !== nom); });
   const extras = loadCats().filter(c => c !== nom);
-  saveDB(); saveExtraCats(extras);
+  await saveDB(); await saveExtraCats(extras);
   renderCatEditList();
   renderSidebar();
   rebuildCatCheckboxes();
+  showSyncStatus('✓ Catégorie supprimée', 'green');
 }
 
 function rebuildCatCheckboxes() {
@@ -1482,10 +1527,7 @@ const SITE_DEFAULTS = {
 };
 let SITE_CONFIG = {...SITE_DEFAULTS};
 
-function loadSiteConfig() {
-  const s = localStorage.getItem('compendium_site');
-  if (s) { try { SITE_CONFIG = {...SITE_DEFAULTS, ...JSON.parse(s)}; } catch(e){} }
-}
+// loadSiteConfig défini via Firebase (voir initApp)
 function saveSiteConfig() {
   SITE_CONFIG.badge    = document.getElementById('s-badge').value.trim()    || SITE_DEFAULTS.badge;
   SITE_CONFIG.title    = document.getElementById('s-title').value.trim()    || SITE_DEFAULTS.title;
@@ -1493,14 +1535,15 @@ function saveSiteConfig() {
   SITE_CONFIG.homeicon = document.getElementById('s-homeicon').value.trim() || SITE_DEFAULTS.homeicon;
   SITE_CONFIG.hometitle= document.getElementById('s-hometitle').value.trim()|| SITE_DEFAULTS.hometitle;
   SITE_CONFIG.homesub  = document.getElementById('s-homesub').value.trim()  || SITE_DEFAULTS.homesub;
-  localStorage.setItem('compendium_site', JSON.stringify(SITE_CONFIG));
+  window._fsSet('site_config', SITE_CONFIG);
   applySiteConfig();
+  showSyncStatus('✓ Apparence sauvegardée', 'green');
   alert('✅ Apparence enregistrée !');
 }
 function resetSiteConfig() {
   if (!confirm('Réinitialiser l\'apparence aux valeurs par défaut ?')) return;
   SITE_CONFIG = {...SITE_DEFAULTS};
-  localStorage.removeItem('compendium_site');
+  window._fsSet('site_config', SITE_CONFIG);
   applySiteConfig();
   openSiteTab();
 }
@@ -1708,35 +1751,174 @@ let currentProfile = 'all';
 let isFormateur = false;
 let currentTab = 'compendium';
 
-// ═════ DÉMARRAGE DIRECT
+// ═══════════════════════════════════════════════════
+// STOCKAGE — Firebase Firestore (sync temps réel)
+// ═══════════════════════════════════════════════════
+
+// Indicateur chargement
+function showLoadingOverlay(msg) {
+  let el = document.getElementById('fb-loading');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fb-loading';
+    el.style.cssText = 'position:fixed;inset:0;background:rgba(10,14,26,0.92);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;font-family:var(--mono);gap:12px;';
+    el.innerHTML = '<div style="font-size:28px">⚕</div><div id="fb-msg" style="font-size:13px;opacity:0.7"></div><div style="width:40px;height:3px;background:var(--blue);border-radius:2px;animation:fbpulse 1s infinite alternate"></div>';
+    document.body.appendChild(el);
+    const s = document.createElement('style');
+    s.textContent = '@keyframes fbpulse{from{opacity:0.3;width:20px}to{opacity:1;width:60px}}';
+    document.head.appendChild(s);
+  }
+  document.getElementById('fb-msg').textContent = msg || 'Chargement…';
+  el.style.display = 'flex';
+}
+function hideLoadingOverlay() {
+  const el = document.getElementById('fb-loading');
+  if (el) el.style.display = 'none';
+}
+
+// ─── DB médicaments ──────────────────────────────
+async function loadDB() {
+  const saved = await window._fsGet('db');
+  if (saved) { try { DB = saved; } catch(e){} }
+}
+async function saveDB() {
+  await window._fsSet('db', DB);
+}
+
+// ─── Profils ─────────────────────────────────────
+async function loadProfils() {
+  const saved = await window._fsGet('profils');
+  if (saved) { try { PROFILS = saved; } catch(e){} }
+}
+async function saveProfils() {
+  await window._fsSet('profils', PROFILS);
+}
+
+// ─── Catégories extra ────────────────────────────
+function loadCats() {
+  // Les cats viennent de la DB + extras Firestore (chargées au démarrage)
+  return window._extraCats || [];
+}
+async function saveExtraCats(extras) {
+  window._extraCats = extras;
+  await window._fsSet('cats_extra', extras);
+}
+
+// ─── Config site ─────────────────────────────────
+async function loadSiteConfig() {
+  const saved = await window._fsGet('site_config');
+  if (saved) { try { SITE_CONFIG = {...SITE_DEFAULTS, ...saved}; } catch(e){} }
+}
+async function _saveSiteConfigRemote() {
+  await window._fsSet('site_config', SITE_CONFIG);
+}
+// Override saveSiteConfig pour aussi sauvegarder en remote
+const _origSaveSiteConfig = typeof saveSiteConfig !== 'undefined' ? saveSiteConfig : null;
+
+// ─── Images ──────────────────────────────────────
+async function loadHomeImages() {
+  const saved = await window._fsGet('home_images');
+  if (saved) { try { HOME_IMAGES = saved; } catch(e){} }
+}
+async function saveHomeImages() {
+  try { await window._fsSet('home_images', HOME_IMAGES); }
+  catch(e) { alert('⚠ Images trop lourdes pour Firebase. Utilise des images < 500 Ko.'); }
+}
+
+// ─── Démarrage avec Firebase ─────────────────────
+async function initApp() {
+  showLoadingOverlay('Connexion à Firebase…');
+  try {
+    // Charger tout en parallèle
+    showLoadingOverlay('Chargement des données…');
+    await Promise.all([loadDB(), loadProfils(), loadSiteConfig(), loadHomeImages()]);
+
+    // Catégories extra
+    const extraCats = await window._fsGet('cats_extra');
+    window._extraCats = extraCats || [];
+
+    // Listeners temps réel (pour voir les modifs des autres formateurs)
+    window._fsListen('db', val => { if(val){ DB = val; renderSidebar(); } });
+    window._fsListen('profils', val => { if(val){ PROFILS = val; renderProfilBar(); renderHomeTips(); rebuildProfilCheckboxes(); } });
+    window._fsListen('site_config', val => { if(val){ SITE_CONFIG = {...SITE_DEFAULTS,...val}; applySiteConfig(); } });
+    window._fsListen('home_images', val => { if(val){ HOME_IMAGES = val; renderHomeImages(); } });
+    window._fsListen('cats_extra', val => { window._extraCats = val||[]; rebuildCatCheckboxes(); renderSidebar(); });
+
+    hideLoadingOverlay();
+    applySiteConfig();
+    renderProfilBar();
+    renderHomeTips();
+    renderHomeImages();
+    rebuildProfilCheckboxes();
+    rebuildCatCheckboxes();
+    renderSidebar();
+    showHome();
+    showSyncStatus('✓ Connecté', 'green');
+  } catch(e) {
+    hideLoadingOverlay();
+    console.error('Firebase init error:', e);
+    showSyncStatus('⚠ Mode hors-ligne', 'orange');
+    // Fallback localStorage
+    const saved = localStorage.getItem('compendium_db');
+    if (saved) try { DB = JSON.parse(saved); } catch(e2){}
+    applySiteConfig();
+    renderProfilBar();
+    renderHomeTips();
+    renderHomeImages();
+    rebuildProfilCheckboxes();
+    rebuildCatCheckboxes();
+    renderSidebar();
+    showHome();
+  }
+}
+
+function showSyncStatus(msg, color) {
+  let el = document.getElementById('sync-status');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'sync-status';
+    el.style.cssText = 'position:fixed;bottom:12px;right:12px;padding:5px 12px;border-radius:6px;font-size:11px;font-family:var(--mono);z-index:500;transition:opacity 0.5s;background:var(--surface);border:1px solid var(--border)';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.color = color === 'green' ? 'var(--green)' : color === 'orange' ? 'var(--orange)' : 'var(--text2)';
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0'; }, 3000);
+}
+
+// Wrapper saveDB avec indicateur visuel
+const _rawSaveDB = saveDB;
+async function saveDBWithStatus() {
+  showSyncStatus('⏳ Sauvegarde…', 'blue');
+  await saveDB();
+  showSyncStatus('✓ Sauvegardé', 'green');
+}
+
+// ─── Déclenchement ───────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  // Cacher toutes les vues formateur immédiatement
+  // Cacher toutes les vues formateur
   ['view-edit','view-categories','view-profils','view-site'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
-  loadDB();
-  loadProfils();
-  loadSiteConfig();
-  loadHomeImages();
-  applySiteConfig();
-  renderProfilBar();
-  renderHomeTips();
-  renderHomeImages();
-  rebuildProfilCheckboxes();
-  rebuildCatCheckboxes();
-  renderSidebar();
-  showHome();
+  // Attendre que Firebase soit prêt
+  if (window._firebaseReady) {
+    initApp();
+  } else {
+    window.addEventListener('firebaseReady', () => initApp());
+    // Timeout fallback si Firebase ne charge pas
+    setTimeout(() => {
+      if (!window._firebaseReady) {
+        console.warn('Firebase timeout — mode localStorage');
+        hideLoadingOverlay();
+        applySiteConfig();
+        renderProfilBar(); renderHomeTips(); renderHomeImages();
+        rebuildProfilCheckboxes(); rebuildCatCheckboxes();
+        renderSidebar(); showHome();
+      }
+    }, 8000);
+  }
 });
-
-// Persist DB in localStorage
-function loadDB() {
-  const saved = localStorage.getItem('compendium_db');
-  if (saved) { try { DB = JSON.parse(saved); } catch(e){} }
-}
-function saveDB() {
-  localStorage.setItem('compendium_db', JSON.stringify(DB));
-}
 
 // ═════ LOGIN
 function openLoginModal() {
@@ -1795,13 +1977,7 @@ let PROFILS = [
   {id:'pharmacien',label:'Pharmacien', emoji:'💊',  color:'#eab308', desc:'Médicaments OTC, vitamines, traitements chroniques'},
 ];
 
-function loadProfils() {
-  const s = localStorage.getItem('compendium_profils');
-  if (s) { try { PROFILS = JSON.parse(s); } catch(e){} }
-}
-function saveProfils() {
-  localStorage.setItem('compendium_profils', JSON.stringify(PROFILS));
-}
+// profils chargés via Firebase (voir initApp)
 loadProfils();
 
 function hexToRgba(hex, a) {
@@ -1875,7 +2051,7 @@ document.addEventListener('input', e => {
   if (['ep-color','ep-label','ep-emoji'].includes(e.target.id)) updateProfilPreview();
 });
 
-function saveProfil() {
+async function saveProfil() {
   const idxRaw = document.getElementById('ep-idx').value;
   const id = document.getElementById('ep-id').value.trim().toLowerCase().replace(/\s+/g,'_');
   const label = document.getElementById('ep-label').value.trim();
@@ -1890,36 +2066,37 @@ function saveProfil() {
     PROFILS[parseInt(idxRaw)] = profil;
     if (oldId !== id) {
       DB.forEach(m => { if(m.profils.includes(oldId)) { m.profils = m.profils.map(p=>p===oldId?id:p); } });
-      saveDB();
+      await saveDB();
     }
   } else {
     PROFILS.push(profil);
   }
-  saveProfils();
+  await saveProfils();
   closeProfilModal();
   renderProfilBar();
   renderHomeTips();
   renderProfilEditList();
   rebuildProfilCheckboxes();
+  showSyncStatus('✓ Profil sauvegardé', 'green');
 }
 
-function deleteProfil(idx) {
+async function deleteProfil(idx) {
   const p = PROFILS[idx];
   const count = DB.filter(m=>m.profils.includes(p.id)).length;
   const msg = count > 0
     ? `Supprimer le profil "${p.label}" ?\n⚠ ${count} médicament(s) ont ce profil — il sera retiré de leurs fiches.`
     : `Supprimer le profil "${p.label}" ?`;
   if (!confirm(msg)) return;
-  // Retirer ce profil de tous les médicaments
   DB.forEach(m => { m.profils = m.profils.filter(pr => pr !== p.id); });
   PROFILS.splice(idx, 1);
-  saveProfils(); saveDB();
+  await saveProfils(); await saveDB();
   if (currentProfile === p.id) { currentProfile = 'all'; }
   renderProfilBar();
   renderHomeTips();
   renderProfilEditList();
   renderSidebar();
   rebuildProfilCheckboxes();
+  showSyncStatus('✓ Profil supprimé', 'green');
 }
 
 function rebuildProfilCheckboxes() {
@@ -2129,10 +2306,12 @@ function renderEditList() {
     </div>`).join('');
 }
 
-function deleteMed(nom) {
+async function deleteMed(nom) {
   if (!confirm(`Supprimer "${nom}" ?`)) return;
   DB = DB.filter(m => m.nom !== nom);
-  saveDB();
+  showSyncStatus('⏳ Suppression…', 'blue');
+  await saveDB();
+  showSyncStatus('✓ Médicament supprimé', 'green');
   renderSidebar();
   if (currentTab === 'edit') renderEditList();
   else showHome();
@@ -2161,7 +2340,7 @@ function openModal(nom) {
 }
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-function saveMed() {
+async function saveMed() {
   const oldNom = document.getElementById('edit-idx').value;
   const nom = document.getElementById('e-nom').value.trim();
   if (!nom) { alert('Le nom est requis'); return; }
@@ -2192,12 +2371,15 @@ function saveMed() {
 
   if (oldNom) { const idx = DB.findIndex(m=>m.nom===oldNom); if(idx>-1) DB[idx]=newMed; }
   else DB.push(newMed);
-  saveDB();
+  showSyncStatus('⏳ Sauvegarde…', 'blue');
+  await saveDB();
+  showSyncStatus('✓ Médicament sauvegardé', 'green');
   closeModal();
   renderSidebar();
   if (currentTab === 'edit') renderEditList();
   else showMed(nom);
 }
+
 </script>
 </body>
 </html>
