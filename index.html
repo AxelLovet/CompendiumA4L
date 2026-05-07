@@ -197,6 +197,16 @@ main{padding:24px;overflow-y:auto;}
 .tab:hover{color:var(--text);}
 .tab.on{color:var(--blue);border-bottom-color:var(--blue);}
 
+/* ── HOME IMAGES ── */
+#view-home{position:relative;min-height:520px;}
+#home-images-layer{position:absolute;inset:0;z-index:2;pointer-events:none;}
+#home-images-layer.edit-mode{pointer-events:all;}
+.home-img-wrap{position:absolute;user-select:none;box-sizing:border-box;}
+.home-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;border-radius:4px;}
+.home-img-wrap .img-del{position:absolute;top:-9px;right:-9px;width:22px;height:22px;border-radius:50%;background:#ef4444;border:2px solid #fff;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;line-height:1;}
+.home-img-wrap .img-resize{position:absolute;bottom:-6px;right:-6px;width:16px;height:16px;background:#3b82f6;border:2px solid #fff;border-radius:3px;cursor:se-resize;z-index:5;}
+.home-img-wrap.selected{outline:2px dashed #3b82f6;outline-offset:2px;}
+
 /* scrollbar */
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
@@ -259,14 +269,26 @@ main{padding:24px;overflow-y:auto;}
       <div class="sb-search"><input type="text" id="sb-input" placeholder="Rechercher…" oninput="doSearch(this.value)"></div>
       <div id="sb-content"></div>
     </aside>
-    <main>
+    <main id="main-content">
       <!-- ACCUEIL -->
       <div id="view-home">
-        <div id="home-icon" class="home-icon">⚕️</div>
-        <div id="home-title" class="home-title">Compendium Médical SSSM</div>
-        <div id="home-sub" class="home-sub">Base pharmacologique SFMU/SAMU pour le roleplay médical sur Arma 3. Sélectionne un profil puis clique sur un médicament.</div>
-        <div class="home-stats" id="home-stats"></div>
-        <div class="home-tips" id="home-tips"></div>
+        <!-- Zone images libres — positionnées par rapport à view-home -->
+        <div id="home-images-layer"></div>
+        <!-- Contenu texte -->
+        <div id="home-content" style="text-align:center;padding:48px 20px 20px;position:relative;z-index:1">
+          <div id="home-icon" class="home-icon">⚕️</div>
+          <div id="home-title" class="home-title">Compendium Médical SSSM</div>
+          <div id="home-sub" class="home-sub">Base pharmacologique SFMU/SAMU pour le roleplay médical sur Arma 3. Sélectionne un profil puis clique sur un médicament.</div>
+          <div class="home-stats" id="home-stats"></div>
+          <div class="home-tips" id="home-tips"></div>
+        </div>
+        <!-- Barre formateur -->
+        <div id="home-edit-bar" style="display:none;position:absolute;top:10px;right:10px;z-index:20;display:none;gap:6px;align-items:center">
+          <label style="background:var(--blue);color:white;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500">
+            ＋ Image <input type="file" accept="image/*" id="img-upload-input" style="display:none" onchange="addImageFromFile(this)">
+          </label>
+          <button onclick="clearAllImages()" style="background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);padding:6px 10px;border-radius:6px;font-size:12px">🗑 Tout effacer</button>
+        </div>
       </div>
       <!-- FICHE -->
       <div id="view-med"></div>
@@ -321,8 +343,22 @@ main{padding:24px;overflow-y:auto;}
             </div>
           </div>
         </div>
-        <!-- Aperçu -->
-        <div class="section" style="margin-top:16px">
+        <!-- Images page d'accueil -->
+        <div class="section" style="grid-column:1/-1;margin-top:4px">
+          <div class="section-head"><span class="sh-bar" style="background:var(--purple)"></span>Images de la page d'accueil</div>
+          <div class="section-body">
+            <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Ajoute des logos, bannières ou images. Déplace-les librement sur la page d'accueil en les faisant glisser. Redimensionne-les avec les poignées.</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+              <label style="background:var(--blue);color:white;padding:8px 16px;border-radius:7px;font-size:13px;cursor:pointer;font-weight:500">
+                ＋ Ajouter une image
+                <input type="file" accept="image/*" id="img-upload-apparence" style="display:none" onchange="addImageFromFile(this)">
+              </label>
+              <button onclick="clearAllImages()" style="background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);padding:8px 14px;border-radius:7px;font-size:13px">🗑 Effacer toutes les images</button>
+            </div>
+            <div id="img-list-apparence" style="display:flex;flex-direction:column;gap:6px"></div>
+            <p style="font-size:11px;color:var(--text3);margin-top:10px;font-family:var(--mono)">💡 Sur la page d'accueil : glisse pour déplacer · poignée coin bas-droit pour redimensionner · ✕ pour supprimer</p>
+          </div>
+        </div>
           <div class="section-head"><span class="sh-bar" style="background:var(--teal)"></span>Aperçu en temps réel</div>
           <div class="section-body">
             <div style="background:var(--surface2);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:10px;margin-bottom:12px">
@@ -1102,6 +1138,7 @@ function openSiteTab() {
   document.getElementById('s-hometitle').value= SITE_CONFIG.hometitle;
   document.getElementById('s-homesub').value  = SITE_CONFIG.homesub;
   previewSite();
+  renderImgListApparence();
 }
 function previewSite() {
   document.getElementById('prev-badge').textContent    = document.getElementById('s-badge').value     || SITE_DEFAULTS.badge;
@@ -1111,7 +1148,169 @@ function previewSite() {
   document.getElementById('prev-hometitle').textContent= document.getElementById('s-hometitle').value || SITE_DEFAULTS.hometitle;
   document.getElementById('prev-homesub').textContent  = document.getElementById('s-homesub').value   || SITE_DEFAULTS.homesub;
 }
-function openSiteModal() { showTab('site', document.querySelectorAll('.tab')[3]); }
+function openSiteModal() { showTab('site', document.querySelectorAll('.tab')[4]); }
+
+// ═════ IMAGES PAGE D'ACCUEIL
+let HOME_IMAGES = [];
+
+function loadHomeImages() {
+  try { const s = localStorage.getItem('compendium_images'); if (s) HOME_IMAGES = JSON.parse(s); } catch(e) {}
+}
+function saveHomeImages() {
+  try { localStorage.setItem('compendium_images', JSON.stringify(HOME_IMAGES)); }
+  catch(e) { alert('⚠ Images trop lourdes pour le stockage local. Utilise des images plus petites (< 500 Ko).'); }
+}
+
+function addImageFromFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 1500000) { alert('Image trop lourde (max 1.5 Mo). Compresse-la avant.'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    HOME_IMAGES.push({ id:'img_'+Date.now(), src:e.target.result, x:30, y:30, w:180, h:120, opacity:1, label:file.name });
+    saveHomeImages();
+    renderHomeImages();
+    renderImgListApparence();
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function clearAllImages() {
+  if (!confirm('Effacer toutes les images ?')) return;
+  HOME_IMAGES = [];
+  saveHomeImages(); renderHomeImages(); renderImgListApparence();
+}
+
+function deleteImage(id) {
+  HOME_IMAGES = HOME_IMAGES.filter(i => i.id !== id);
+  saveHomeImages(); renderHomeImages(); renderImgListApparence();
+}
+
+function renderHomeImages() {
+  const layer = document.getElementById('home-images-layer');
+  if (!layer) return;
+  layer.innerHTML = '';
+
+  if (isFormateur) {
+    layer.classList.add('edit-mode');
+  } else {
+    layer.classList.remove('edit-mode');
+  }
+
+  HOME_IMAGES.forEach(img => {
+    const wrap = document.createElement('div');
+    wrap.className = 'home-img-wrap';
+    wrap.style.left   = img.x + 'px';
+    wrap.style.top    = img.y + 'px';
+    wrap.style.width  = img.w + 'px';
+    wrap.style.height = img.h + 'px';
+    wrap.dataset.id   = img.id;
+
+    const im = document.createElement('img');
+    im.src = img.src;
+    im.style.opacity = img.opacity ?? 1;
+    wrap.appendChild(im);
+
+    if (isFormateur) {
+      wrap.style.cursor = 'grab';
+
+      // ── Bouton supprimer
+      const del = document.createElement('button');
+      del.className = 'img-del';
+      del.innerHTML = '✕';
+      del.addEventListener('mousedown', e => e.stopPropagation());
+      del.addEventListener('click', e => { e.stopPropagation(); deleteImage(img.id); });
+      wrap.appendChild(del);
+
+      // ── Poignée resize
+      const rsz = document.createElement('div');
+      rsz.className = 'img-resize';
+      rsz.addEventListener('mousedown', e => {
+        e.stopPropagation(); e.preventDefault();
+        const startX = e.clientX, startW = img.w, startH = img.h;
+        const ratio = startH / startW;
+        function onMove(ev) {
+          const dw = ev.clientX - startX;
+          img.w = Math.max(40, startW + dw);
+          img.h = Math.max(30, Math.round(img.w * ratio));
+          wrap.style.width  = img.w + 'px';
+          wrap.style.height = img.h + 'px';
+        }
+        function onUp() {
+          saveHomeImages(); renderImgListApparence();
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+      wrap.appendChild(rsz);
+
+      // ── Drag
+      wrap.addEventListener('mousedown', e => {
+        if (e.target === del || e.target === rsz) return;
+        e.preventDefault();
+        wrap.style.cursor = 'grabbing';
+        // Sélection visuelle
+        document.querySelectorAll('.home-img-wrap').forEach(w => w.classList.remove('selected'));
+        wrap.classList.add('selected');
+        const startX = e.clientX, startY = e.clientY;
+        const origX = img.x, origY = img.y;
+        function onMove(ev) {
+          img.x = Math.max(0, origX + ev.clientX - startX);
+          img.y = Math.max(0, origY + ev.clientY - startY);
+          wrap.style.left = img.x + 'px';
+          wrap.style.top  = img.y + 'px';
+        }
+        function onUp() {
+          wrap.style.cursor = 'grab';
+          saveHomeImages(); renderImgListApparence();
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    }
+
+    layer.appendChild(wrap);
+  });
+}
+
+function renderImgListApparence() {
+  const list = document.getElementById('img-list-apparence');
+  if (!list) return;
+  if (!HOME_IMAGES.length) {
+    list.innerHTML = `<p style="font-size:12px;color:var(--text3)">Aucune image ajoutée.</p>`;
+    return;
+  }
+  list.innerHTML = HOME_IMAGES.map(img => `
+    <div style="display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 12px">
+      <img src="${img.src}" style="width:52px;height:36px;object-fit:contain;border-radius:4px;background:#1a2235">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${img.label}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--mono)">${img.w}×${img.h}px · x:${Math.round(img.x)}, y:${Math.round(img.y)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;min-width:100px">
+        <label style="font-size:10px;color:var(--text3)">Opacité</label>
+        <input type="range" min="10" max="100" value="${Math.round((img.opacity??1)*100)}" style="width:100%"
+          oninput="updateImgOpacity('${img.id}',this.value)">
+      </div>
+      <button onclick="deleteImage('${img.id}')" style="background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);padding:5px 10px;border-radius:5px;font-size:12px;flex-shrink:0">🗑</button>
+    </div>
+  `).join('');
+}
+
+function updateImgOpacity(id, val) {
+  const img = HOME_IMAGES.find(i => i.id === id);
+  if (!img) return;
+  img.opacity = val / 100;
+  // Mettre à jour l'img dans le DOM sans re-render complet
+  const wrap = document.querySelector(`.home-img-wrap[data-id="${id}"] img`);
+  if (wrap) wrap.style.opacity = img.opacity;
+  saveHomeImages();
+}
 
 // ═════ HOME TIPS dynamiques
 function renderHomeTips() {
@@ -1130,9 +1329,11 @@ window.addEventListener('DOMContentLoaded', () => {
   loadDB();
   loadProfils();
   loadSiteConfig();
+  loadHomeImages();
   applySiteConfig();
   renderProfilBar();
   renderHomeTips();
+  renderHomeImages();
   rebuildProfilCheckboxes();
   rebuildCatCheckboxes();
   renderSidebar();
@@ -1169,7 +1370,9 @@ function doLogin() {
     document.getElementById('login-btn').style.display = 'none';
     document.getElementById('logout-btn').style.display = 'inline-block';
     document.getElementById('tabs').style.display = 'block';
+    document.getElementById('home-edit-bar').style.display = 'flex';
     renderProfilBar();
+    renderHomeImages();
     renderSidebar();
     showHome();
   } else {
@@ -1182,8 +1385,10 @@ function doLogout() {
   document.getElementById('logout-btn').style.display = 'none';
   document.getElementById('login-btn').style.display = 'inline-block';
   document.getElementById('tabs').style.display = 'none';
+  document.getElementById('home-edit-bar').style.display = 'none';
   currentTab = 'compendium';
   renderProfilBar();
+  renderHomeImages();
   renderSidebar();
   showHome();
 }
